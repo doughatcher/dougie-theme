@@ -2,7 +2,7 @@
   "$schema": "https://micro.blog/schemas/plugin.json",
   "name": "Dougie",
   "version": "2.0.0",
-  "description": "A versatile micro.blog theme — microblog, publication, or one-page portfolio. Default + starfield variants. Each site configures branding, social links, CTA copy, and theme variant via the per-site plugin settings below.",
+  "description": "Versatile two-column theme that carries both a microblog timeline and a long-form publication on the same site. Configurable sidebar with profile, social links, From the Blog, Recent Publications, and RSS. Two visual variants — Default (clean editorial) and Starfield Dreams (animated dark). All branding, CTAs, social links, and the share strip are per-site plugin settings — same theme, multiple sites, no forking.",
   "author": {
     "name": "Doug Hatcher",
     "url": "https://doughatcher.com"
@@ -10,16 +10,17 @@
   "license": "MIT",
   "homepage": "https://github.com/doughatcher/dougie-theme",
   "repository": "https://github.com/doughatcher/dougie-theme",
+  "screenshot": "images/screenshot.png",
   "parameters": [
     {
       "id": "theme_variant",
       "title": "Theme variant",
-      "description": "Default = clean editorial style. Starfield = animated dark background, more personal/social register.",
+      "description": "Default = clean editorial style, light background. Starfield Dreams = animated dark theme for a more personal/social register.",
       "type": "select",
       "default": "default",
       "options": [
         { "value": "default", "label": "Default" },
-        { "value": "starfield", "label": "Starfield (dark, animated)" }
+        { "value": "starfield", "label": "Starfield Dreams" }
       ]
     },
     {
