@@ -1,0 +1,53 @@
+{{ define "main" }}
+<div class="blog-header">
+    <h1>Blog</h1>
+    <p class="blog-description">I write about the gap between what commerce platforms promise and what they actually deliver in production. Fifteen years of migrations, no vendor allegiances.</p>
+</div>
+
+<div class="posts-list blog-list">
+    {{ $paginator := .Paginate .Pages (.Site.Params.posts_per_page | default 10) }}
+
+    {{ range $paginator.Pages }}
+    <article class="post-preview blog-post-preview">
+        {{ if .Params.pillar }}
+        <span class="blog-pillar">{{ .Params.pillar }}</span>
+        {{ end }}
+
+        <h2 class="post-title">
+            <a href="{{ .Permalink }}">{{ .Title }}</a>
+        </h2>
+
+        <div class="blog-summary">
+            {{ .Summary | truncate 220 }}
+        </div>
+
+        <div class="blog-post-footer">
+            <div class="post-meta">
+                <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                    {{ .Date.Format "January 2, 2006" }}
+                </time>
+                {{ if .Site.Params.show_reading_time }}
+                <span class="reading-time">· {{ .ReadingTime }} min read</span>
+                {{ end }}
+            </div>
+            <a href="{{ .Permalink }}" class="read-more">Read →</a>
+        </div>
+    </article>
+    {{ else }}
+    <p class="no-posts">No posts yet — check back soon.</p>
+    {{ end }}
+
+    {{ if gt $paginator.TotalPages 1 }}
+    <nav class="pagination">
+        {{ if $paginator.HasPrev }}
+        <a href="{{ $paginator.Prev.URL }}" class="prev">← Newer</a>
+        {{ end }}
+        {{ if $paginator.HasNext }}
+        <a href="{{ $paginator.Next.URL }}" class="next">Older →</a>
+        {{ end }}
+    </nav>
+    {{ end }}
+</div>
+
+<p class="blog-follow">Following along: <a href="/feed.xml">RSS</a> / <a href="https://www.linkedin.com/in/doughatcher/">LinkedIn</a></p>
+{{ end }}

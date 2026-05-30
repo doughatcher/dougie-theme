@@ -1,0 +1,59 @@
+{{ define "main" }}
+<div class="single-post-container">
+    <div class="single-post-card blog-post-single">
+        <header class="post-header">
+            {{ if .Params.pillar }}
+            <span class="blog-pillar">{{ .Params.pillar }}</span>
+            {{ end }}
+
+            <h1 class="single-post-title">{{ .Title }}</h1>
+
+            <div class="post-meta">
+                <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "January 2, 2006" }}</time> · {{ .ReadingTime }} min read
+            </div>
+        </header>
+
+        <div class="post-content e-content">
+            {{ .Content }}
+        </div>
+
+        {{ if .Params.tags }}
+        <footer class="post-footer">
+            <div class="post-tags">
+                {{ range .Params.tags }}
+                <a href="{{ "/tags/" | relURL }}{{ . | urlize }}" class="tag p-category">#{{ . }}</a>
+                {{ end }}
+            </div>
+        </footer>
+        {{ end }}
+    </div>
+
+    {{ partial "social-share.html" . }}
+
+    <aside class="blog-consulting-cta">
+        <p class="blog-consulting-line">
+            Doug is a Solution Consultant and Enterprise Architect at
+            <a href="https://blueacornici.com" rel="noopener">Blue Acorn iCi</a>,
+            helping mid-market and enterprise commerce teams plan, build, and stabilize composable commerce platforms.
+            If any of this sounds like the project you're staring at,
+            <a href="mailto:doug.hatcher@blueacornici.com">reach out to learn more</a>.
+        </p>
+    </aside>
+
+    <nav class="blog-post-nav">
+        {{ if .NextInSection }}
+        <a href="{{ .NextInSection.Permalink }}" class="blog-nav-link blog-nav-prev">
+            <span class="blog-nav-label">← Previous</span>
+            <span class="blog-nav-title">{{ .NextInSection.Title }}</span>
+        </a>
+        {{ end }}
+        {{ if .PrevInSection }}
+        <a href="{{ .PrevInSection.Permalink }}" class="blog-nav-link blog-nav-next">
+            <span class="blog-nav-label">Next →</span>
+            <span class="blog-nav-title">{{ .PrevInSection.Title }}</span>
+        </a>
+        {{ end }}
+        <a href="{{ "/blog/" | relURL }}" class="blog-back-link">← All posts</a>
+    </nav>
+</div>
+{{ end }}

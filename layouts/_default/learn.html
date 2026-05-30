@@ -1,0 +1,152 @@
+{{ define "main" }}
+<div class="learn-page">
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+    <p class="page-description">Learn about the history, governance, and traditions of the Waccamaw Indian People</p>
+  </header>
+
+  <div class="learn-content">
+    <!-- Historical Sections -->
+    <div class="history-sections">
+      {{ partial "learn/history.html" . }}
+      {{ partial "learn/ancient.html" . }}
+      {{ partial "learn/political.html" . }}
+      {{ partial "learn/today.html" . }}
+    </div>
+
+    <!-- Governing Body -->
+    <section class="governing-body-section">
+      <h2>GOVERNING BODY</h2>
+      
+      {{ $data := index .Site.Data "governing-body" }}
+      {{ if not $data }}
+        {{ $data = partial "learn/governing-body-data.html" . }}
+      {{ end }}
+      
+      <!-- Chief -->
+      {{ with $data.chief }}
+      <div class="chief-section">
+        <div class="governing-body-card featured-chief">
+          {{ if .image }}
+          <img src="{{ .image }}" alt="{{ .name }}">
+          {{ end }}
+          <div class="card-content">
+            <h3>{{ .name }}</h3>
+            <p class="title">{{ .title }}</p>
+          </div>
+        </div>
+      </div>
+      {{ end }}
+
+      <!-- Dynamic Sections from YAML -->
+      {{ range $data.sections }}
+      {{ $sectionId := .section_id }}
+      <div class="{{ .section_id }}-section">
+        <h3>{{ .section_title }}</h3>
+        
+        {{ if eq .display_as "grid" }}
+          <!-- Grid Layout (Chiefs, etc) -->
+          <div class="governing-body-grid">
+            {{ range .members }}
+            {{ if .name }}
+            <div class="governing-body-card">
+              {{ if .image }}
+              <img src="{{ .image }}" alt="{{ .name }}">
+              {{ end }}
+              <div class="card-content">
+                <h3>{{ .name }}</h3>
+                <p class="title">{{ .title }}</p>
+              </div>
+            </div>
+            {{ end }}
+            {{ end }}
+          </div>
+        
+        {{ else if eq .display_as "council" }}
+          <!-- Council Layout (Chief + Seats) -->
+          {{ with .chief_of_council }}
+          <div class="chief-of-council-wrapper">
+            <div class="governing-body-card">
+              {{ if .image }}
+              <img src="{{ .image }}" alt="{{ .name }}">
+              {{ end }}
+              <div class="card-content">
+                <h3>{{ .name }}</h3>
+                <p class="title">{{ .title }}</p>
+              </div>
+            </div>
+          </div>
+          {{ end }}
+          
+          {{ if .seats }}
+          <div class="council-seats-grid">
+            <div class="governing-body-grid">
+            {{ range .seats }}
+            <div class="governing-body-card">
+              {{ if .image }}
+              <img src="{{ .image }}" alt="Seat {{ .seat_number }}{{ if .name }} - {{ .name }}{{ end }}">
+              {{ end }}
+              <div class="card-content">
+                <h3>Seat {{ .seat_number }}</h3>
+                {{ if .name }}
+                <p class="member-name">{{ .name }}</p>
+                {{ end }}
+              </div>
+            </div>
+            {{ end }}
+            </div>
+          </div>
+          {{ end }}
+        
+        {{ else if eq .display_as "list" }}
+          <!-- List Layout (Elders, Judicial, Administrative) -->
+          {{ $listClass := .list_class | default $sectionId }}
+          <div class="{{ $listClass }}-list">
+            {{ range .members }}
+            {{ if .name }}
+            <div class="{{ $sectionId }}-item">
+              <h3>{{ .name }}</h3>
+              <p class="title">{{ .title }}</p>
+            </div>
+            {{ end }}
+            {{ end }}
+          </div>
+        {{ end }}
+      </div>
+      {{ end }}
+
+      <!-- Retired Leadership -->
+      {{ with $data.retired_leadership }}
+      <div class="retired-chiefs-minimized">
+        <h4>{{ .section_title }}</h4>
+        <div class="retired-chiefs-list">
+          {{ range .members }}
+          {{ if .name }}
+          <div class="retired-chief-item">
+            <div class="retired-chief-content">
+              <h5>{{ .name }}</h5>
+              <p class="title">{{ .title }}</p>
+            </div>
+          </div>
+          {{ end }}
+          {{ end }}
+        </div>
+      </div>
+      {{ end }}
+    </section>
+
+    <!-- Attribution -->
+    <section class="attribution-section">
+      <h2>ATTRIBUTION</h2>
+      <div class="attribution-content">
+        <h3>Lindsey and Jason Stamp, Courtney Hayes, Ashley Waters</h3>
+        <p>Photography (including most recent Pauwau photos and event flyers)</p>
+        <p><a href="https://www.flickr.com/photos/54784067@N05/" target="_blank" rel="noopener noreferrer">Flickr Profile</a></p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Face focusing script -->
+<script src="{{ "js/face-focus.js" | absURL }}"></script>
+{{ end }}

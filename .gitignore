@@ -1,0 +1,11 @@
+# Hugo
+.hugo_build.lock
+public/
+resources/
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/

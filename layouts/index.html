@@ -1,0 +1,85 @@
+{{ define "main" }}
+<div class="posts-list">
+    {{ $paginator := .Paginate (where (where .Site.RegularPages ".Params.microblog" "!=" false) "Type" "in" (slice "post" "posts")) (.Site.Params.posts_per_page | default 20) }}
+    
+    {{ range $paginator.Pages }}
+    <article class="post-preview{{ if .Params.microblog }} micro-post{{ end }}">
+        {{ if and (not .Params.microblog) .Params.thumbnail .Site.Params.show_thumbnails }}
+        <div class="post-thumbnail">
+            <img src="{{ .Params.thumbnail }}" alt="Post thumbnail" loading="lazy">
+        </div>
+        {{ end }}
+        
+        <div class="post-content">
+            {{ if and (not .Params.microblog) .Title }}
+            <h2 class="post-title">
+                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+            </h2>
+            {{ end }}
+            
+            <div class="post-body">
+                {{ .Content }}
+            </div>
+            
+            <div class="post-meta">
+                <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                    <a href="{{ .RelPermalink }}">{{ .Date.Format "Jan 2, 2006" }}</a>
+                </time>
+                
+                {{ if and (not .Params.microblog) .Site.Params.show_word_count }}
+                <span class="word-count">{{ .WordCount }} words</span>
+                {{ end }}
+                
+                {{ if and (not .Params.microblog) .Site.Params.show_reading_time }}
+                <span class="reading-time">{{ .ReadingTime }} min read</span>
+                {{ end }}
+                
+                {{ if .Params.tags }}
+                <div class="post-tags">
+                    {{ range .Params.tags }}
+                    <a href="{{ "/tags/" | relURL }}{{ . | urlize }}" class="tag">#{{ . }}</a>
+                    {{ end }}
+                </div>
+                {{ end }}
+                
+                <!-- Social syndication links -->
+                {{ if or .Params.mastodon .Params.bluesky .Params.threads .Params.linkedin }}
+                <div class="syndication-links">
+                    {{ if .Params.mastodon }}
+                    <a href="https://mastodon.social/@{{ .Params.mastodon.username }}/{{ .Params.mastodon.id }}" class="syndication-link" target="_blank">Mastodon</a>
+                    {{ end }}
+                    {{ if .Params.bluesky }}
+                    <a href="{{ .Params.bluesky.link }}" class="syndication-link" target="_blank">Bluesky</a>
+                    {{ end }}
+                    {{ if .Params.threads }}
+                    <a href="{{ .Params.threads.url }}" class="syndication-link" target="_blank">Threads</a>
+                    {{ end }}
+                    {{ if .Params.linkedin }}
+                    <a href="https://www.linkedin.com/feed/update/urn:li:activity:{{ .Params.linkedin.activity | strings.TrimPrefix "urn:li:activity:" }}" class="syndication-link" target="_blank">LinkedIn</a>
+                    {{ end }}
+                </div>
+                {{ end }}
+            </div>
+        </div>
+    </article>
+    {{ end }}
+    
+    {{ if gt $paginator.TotalPages 1 }}
+    <nav class="pagination">
+        {{ if $paginator.HasPrev }}
+        <a href="{{ $paginator.Prev.URL }}" class="prev">← Newer Posts</a>
+        {{ end }}
+        
+        {{ if $paginator.HasNext }}
+        <a href="{{ $paginator.Next.URL }}" class="next">Older Posts →</a>
+        {{ end }}
+    </nav>
+    {{ end }}
+    
+    <div class="feed-links">
+        <a href="{{ "/archive/" | relURL }}">Archive</a> • 
+        <a href="{{ "feed.xml" | absURL }}">RSS</a> • 
+        <a href="{{ "feed.json" | absURL }}">JSON Feed</a>
+    </div>
+</div>
+{{ end }}

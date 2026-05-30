@@ -1,0 +1,75 @@
+{
+  "$schema": "https://micro.blog/schemas/plugin.json",
+  "name": "Dougie",
+  "version": "2.0.0",
+  "description": "A versatile micro.blog theme — microblog, publication, or one-page portfolio. Default + starfield variants. Each site configures branding, social links, CTA copy, and theme variant via the per-site plugin settings below.",
+  "author": {
+    "name": "Doug Hatcher",
+    "url": "https://doughatcher.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/doughatcher/dougie-theme",
+  "repository": "https://github.com/doughatcher/dougie-theme",
+  "parameters": [
+    {
+      "id": "theme_variant",
+      "title": "Theme variant",
+      "description": "Default = clean editorial style. Starfield = animated dark background, more personal/social register.",
+      "type": "select",
+      "default": "default",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "starfield", "label": "Starfield (dark, animated)" }
+      ]
+    },
+    {
+      "id": "site_bio",
+      "title": "Site bio / tagline",
+      "description": "One-line tagline shown under the site title in the header.",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "id": "profile_image_url",
+      "title": "Profile / brand image URL",
+      "description": "Absolute URL to a circular profile photo or square brand mark shown in the header.",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "id": "consulting_cta_enabled",
+      "title": "Show consulting CTA on blog posts",
+      "description": "When ON, the consulting CTA (with text and link below) renders at the bottom of every /blog/ post. Leave OFF for sites that aren't selling services.",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "id": "consulting_cta_text",
+      "title": "Consulting CTA copy",
+      "description": "Body copy shown in the CTA. Plain text or markdown.",
+      "type": "textarea",
+      "default": ""
+    },
+    {
+      "id": "consulting_cta_url",
+      "title": "Consulting CTA link",
+      "description": "Where the CTA's call-to-action button points. mailto: or https://.",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "id": "social_links_json",
+      "title": "Social links (JSON)",
+      "description": "JSON array of {label, url} objects rendered in the footer. e.g. [{\"label\":\"LinkedIn\",\"url\":\"https://linkedin.com/in/...\"}]",
+      "type": "textarea",
+      "default": "[]"
+    },
+    {
+      "id": "share_strip_enabled",
+      "title": "Show share strip on single posts",
+      "description": "Renders the LinkedIn/X/Bluesky/Reddit/HN/Email/Copy row below post body. Useful for content sites; less so for low-key personal feeds.",
+      "type": "boolean",
+      "default": true
+    }
+  ]
+}
