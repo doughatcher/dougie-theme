@@ -1,15 +1,16 @@
 name = "Dougie"
 license = "MIT"
 licenselink = "https://github.com/doughatcher/dougie-theme/blob/main/LICENSE"
-description = "Versatile micro.blog theme — microblog, publication, or one-page portfolio. Default + starfield variants. Configure per-site via plugin settings."
+description = "A versatile micro.blog theme that bridges the microblog timeline and long-form publication patterns. Two-column layout with a configurable sidebar (profile, social, From the Blog, Recent Publications, RSS). Default and Starfield Dreams variants. Every visual choice is configurable per site — branding, CTAs, social links, share strip, theme variant — so the same theme can carry a C-level publication and a personal timeline without forking."
 homepage = "https://github.com/doughatcher/dougie-theme"
-tags = ["microblog", "minimal", "versatile", "configurable", "responsive", "publication", "portfolio", "multi-purpose"]
-features = ["responsive", "rss", "json-feed", "micropost-detection", "social-media", "centered-layout", "archive", "photos", "configurable-layouts", "publication-mode", "one-page-mode"]
+demosite = "https://doughatcher.com"
+tags = ["microblog", "two-column", "publication", "portfolio", "responsive", "configurable", "sidebar", "dark-mode", "indieweb"]
+features = ["responsive", "rss", "json-feed", "micropost-detection", "social-media", "two-column-layout", "configurable-sidebar", "publication-mode", "dark-mode", "theme-variants", "share-strip", "link-preview-cards"]
 min_version = "0.91.0"
 
 [author]
   name = "Doug Hatcher"
-  homepage = "https://github.com/doughatcher"
+  homepage = "https://doughatcher.com"
   repo = "https://github.com/doughatcher/dougie-theme"
 
 [original]
