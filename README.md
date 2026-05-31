@@ -2,7 +2,7 @@
 
 A versatile [Hugo](https://gohugo.io) theme for [Micro.blog](https://micro.blog)-hosted sites. One theme that carries a **microblog timeline**, a **long-form publication**, or both on the same site — and reconfigures per site through the plugin settings panel, with no code changes.
 
-![Dougie theme — Starfield variant](screenshot.png)
+![Dougie theme — Starfield variant](images/screenshot-starfield.png)
 
 The same theme drives three very different sites from one shared codebase:
 
