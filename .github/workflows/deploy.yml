@@ -69,6 +69,10 @@ jobs:
           GMAIL_EMAIL: ${{ vars.GMAIL_EMAIL }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           MICROBLOG_EMAIL: ${{ vars.MICROBLOG_EMAIL }}
+          # SITE_ID is just used during the auth handshake (which site to "switch to"
+          # post-login). The resulting session cookie is account-wide; theme reloads
+          # downstream use theme_id, not site_id. Pinned to superterran arbitrarily.
+          MICROBLOG_SITE_ID: ${{ vars.MICROBLOG_SITE_ID }}
         run: |
           echo "::group::Authenticating (no cached session for today)"
           python3 .github/deploy/microblog_auth.py --output .session-cookie
