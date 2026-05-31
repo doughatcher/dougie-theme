@@ -33,7 +33,9 @@
 
   </article>
 
+  {{ if .Site.Params.share_strip_enabled }}
   {{ partial "social-share.html" . }}
+  {{ end }}
 
   <!-- Reply/Interaction Buttons -->
   <ul class="reply-buttons">

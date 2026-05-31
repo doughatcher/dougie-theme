@@ -1,3 +1,4 @@
+{{ if .Site.Params.show_from_the_blog }}
 {{ $blogSection := .Site.GetPage "section" "blog" }}
 {{ if $blogSection }}
 {{ $latest := index (where $blogSection.Pages "Draft" "!=" true) 0 }}
@@ -25,5 +26,6 @@
         <a href="{{ "/blog/" | relURL }}" class="from-the-blog-see-all">View all posts →</a>
     </div>
 </div>
+{{ end }}
 {{ end }}
 {{ end }}

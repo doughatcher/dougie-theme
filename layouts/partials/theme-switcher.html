@@ -1,4 +1,4 @@
-{{ if .Site.Params.themes.enabled }}
+{{ if .Site.Params.show_theme_chooser }}
 <div class="theme-switcher">
   <select id="theme-select" class="theme-select">
     <option value="">Loading...</option>
@@ -86,7 +86,7 @@
   'use strict';
 
   const STORAGE_KEY = 'selected-theme';
-  const DEFAULT_THEME = '{{ .Site.Params.themes.default | default "default" }}';
+  const DEFAULT_THEME = '{{ .Site.Params.theme_default | default "default" }}';
   const THEME_BASE_PATH = '/themes/';
   
   let currentTheme = null;
