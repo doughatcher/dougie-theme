@@ -21,11 +21,30 @@
     </div>
     <nav class="dougie-topbar-nav">
         {{ $cur := . }}
-        <a href="{{ "/" | relURL }}" class="nav-link{{ if eq $cur.RelPermalink "/" }} active{{ end }}">Home</a>
-        {{ range .Site.Menus.main }}
-        {{ if ne .URL "/" }}
-        <a href="{{ .URL | relURL }}" class="nav-link{{ if hasPrefix $cur.RelPermalink .URL }} active{{ end }}">{{ .Name }}</a>
-        {{ end }}
+        {{/* content_tabs_json is a full OVERRIDE — when set it replaces Home + the
+             micro.blog menu. Otherwise: Home + menu, then sibling_links_json appended
+             (additive). Same semantics as content-tabs.html, so both fields take
+             effect in topbar mode too. */}}
+        {{ $tabs := slice }}
+        {{ with .Site.Params.content_tabs_json }}{{ $tabs = . | transform.Unmarshal }}{{ end }}
+        {{ if $tabs }}
+            {{ range $tabs }}
+            {{ $ext := hasPrefix .url "http" }}
+            {{ $active := cond (eq .url "/") $cur.IsHome (and (not $ext) (hasPrefix $cur.RelPermalink (.url | relURL))) }}
+            <a href="{{ if $ext }}{{ .url }}{{ else }}{{ .url | relURL }}{{ end }}" class="nav-link{{ if $active }} active{{ end }}"{{ if $ext }} rel="me"{{ end }}>{{ .name }}</a>
+            {{ end }}
+        {{ else }}
+            <a href="{{ "/" | relURL }}" class="nav-link{{ if eq $cur.RelPermalink "/" }} active{{ end }}">Home</a>
+            {{ range .Site.Menus.main }}
+            {{ if ne .URL "/" }}
+            <a href="{{ .URL | relURL }}" class="nav-link{{ if hasPrefix $cur.RelPermalink .URL }} active{{ end }}">{{ .Name }}</a>
+            {{ end }}
+            {{ end }}
+            {{ $siblings := .Site.Params.sibling_links }}
+            {{ with .Site.Params.sibling_links_json }}{{ $siblings = . | transform.Unmarshal }}{{ end }}
+            {{ range $siblings }}
+            <a href="{{ .url }}" class="nav-link" rel="me">{{ .name }}</a>
+            {{ end }}
         {{ end }}
         {{/* Topics collapse into a single dropdown (honors hide_topics / topics_limit)
              — never dump every category as its own tab. */}}
