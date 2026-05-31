@@ -1,22 +1,27 @@
 {
-  "version": "2.2.0",
+  "version": "2.3.0",
   "title": "Dougie",
-  "description": "Versatile two-column theme that carries both a microblog timeline and a long-form publication on the same site. Configurable sidebar with profile, social links, From the Blog, Recent Publications, and RSS. Two visual variants — Default (clean editorial) and Starfield Dreams (animated dark). All branding, CTAs, social links, and the share strip are per-site fields — same theme, multiple sites, no forking.",
+  "description": "Versatile two-column theme that carries both a microblog timeline and a long-form publication on the same site. Configurable sidebar with profile, social links, From the Blog, Recent Publications, and RSS. Default and Starfield Dreams variants (visitor-selectable). All branding and social links are per-site fields — same theme, multiple sites, no forking.",
   "fields": [
     {
-      "field": "params.theme_variant",
-      "label": "Theme variant",
-      "placeholder": "default or starfield"
+      "field": "params.avatar",
+      "label": "Profile / brand image URL",
+      "placeholder": "Absolute URL to a circular profile photo or square brand mark."
     },
     {
-      "field": "params.site_bio",
+      "field": "params.show_avatar",
+      "label": "Show profile image",
+      "type": "boolean"
+    },
+    {
+      "field": "params.bio",
       "label": "Site bio / tagline",
       "placeholder": "One-line tagline shown under the site title."
     },
     {
-      "field": "params.profile_image_url",
-      "label": "Profile / brand image URL",
-      "placeholder": "Absolute URL to a circular profile photo or square brand mark."
+      "field": "params.show_bio",
+      "label": "Show bio under site title",
+      "type": "boolean"
     },
     {
       "field": "params.show_social_links",
@@ -74,24 +79,33 @@
       "placeholder": "you@example.com (mailto: prefix added automatically)"
     },
     {
-      "field": "params.consulting_cta_enabled",
-      "label": "Show consulting CTA on blog posts",
+      "field": "params.show_publications_sidebar",
+      "label": "Show \"Recent Publications\" sidebar block",
       "type": "boolean"
     },
     {
-      "field": "params.consulting_cta_text",
-      "label": "Consulting CTA copy",
-      "type": "markdown",
-      "placeholder": "Body copy shown in the CTA. Markdown supported."
+      "field": "params.show_floating_nav",
+      "label": "Show floating navigation",
+      "type": "boolean"
     },
     {
-      "field": "params.consulting_cta_url",
-      "label": "Consulting CTA link",
-      "placeholder": "mailto: or https:// URL the CTA button points at."
+      "field": "params.show_dark_mode_toggle",
+      "label": "Show light/dark mode toggle",
+      "type": "boolean"
     },
     {
-      "field": "params.share_strip_enabled",
-      "label": "Show share strip on single posts",
+      "field": "params.show_word_count",
+      "label": "Show word count on long posts",
+      "type": "boolean"
+    },
+    {
+      "field": "params.show_reading_time",
+      "label": "Show reading time on long posts",
+      "type": "boolean"
+    },
+    {
+      "field": "params.show_thumbnails",
+      "label": "Show post thumbnails",
       "type": "boolean"
     }
   ]
