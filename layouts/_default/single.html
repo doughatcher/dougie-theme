@@ -26,7 +26,13 @@
     {{ end }}
     
     <div class="post-content">
+        {{/* per-site About body: params.about_text (plugin field) overrides the
+             About page content so each site reads differently; blank → page content. */}}
+        {{ if and .Site.Params.about_text (eq .RelPermalink "/about/") }}
+        {{ .Site.Params.about_text | markdownify }}
+        {{ else }}
         {{ .Content }}
+        {{ end }}
     </div>
     
     {{ if .Params.tags }}
