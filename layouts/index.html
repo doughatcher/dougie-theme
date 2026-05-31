@@ -4,6 +4,13 @@
 {{ $total := len $paginator.Pages }}
 <div class="posts-list home-{{ $home }}">
 
+    {{/* Optional Blog featured block (1 hero + 3 cards) at the top of the
+         homepage — same treatment as the Blog page. Toggle: home_blog_featured. */}}
+    {{ if .Site.Params.home_blog_featured }}
+    {{ $featuredBlog := first 4 (where .Site.RegularPages "Section" "blog") }}
+    {{ partial "blog-featured.html" (dict "posts" $featuredBlog "site" .Site) }}
+    {{ end }}
+
     {{ range $i, $p := $paginator.Pages }}
     {{ with $p }}
     {{ if and (eq $home "magazine") (eq $i 1) (gt $total 1) }}<div class="home-grid">{{ end }}
@@ -78,8 +85,9 @@
     {{ if ne $home "sectioned" }}
     {{ $blogPosts := first 4 (where .Site.RegularPages "Section" "blog") }}
     {{/* Show the fuller homepage section only when the matching sidebar callout is OFF,
-         so enabling the sidebar callout doesn't duplicate it here. */}}
-    {{ if and $blogPosts (not .Site.Params.show_from_the_blog) }}
+         and when the top featured block isn't already covering the blog — so we never
+         show blog cards twice. */}}
+    {{ if and $blogPosts (not .Site.Params.show_from_the_blog) (not .Site.Params.home_blog_featured) }}
     <section class="home-section">
         <div class="home-section-head">
             <h2 class="home-section-title">From the Blog</h2>

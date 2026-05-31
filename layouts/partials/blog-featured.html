@@ -1,0 +1,34 @@
+{{/* blog-featured.html — featured blog block: 1 hero + up to 3 cards.
+     Shared by blog/list.html (page-1 header) and the homepage
+     (params.home_blog_featured). Context: a dict with
+       "posts" — a page slice of up to 4 blog posts (hero = first)
+       "site"  — the Site object (for show_reading_time etc.)        */}}
+{{ $featured := .posts }}
+{{ $site := .site }}
+{{ if $featured }}
+<div class="blog-featured">
+    {{ $hero := index $featured 0 }}
+    {{ with $hero }}
+    <article class="blog-hero">
+        {{ with .Params.pillar }}<span class="post-kind">{{ . }}</span>{{ end }}
+        <h2 class="blog-hero-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+        <div class="home-card-meta"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>{{ if and $site.Params.show_reading_time .ReadingTime }} &middot; {{ .ReadingTime }} min read{{ end }}</div>
+        <p class="blog-hero-excerpt">{{ .Summary | plainify | truncate 240 }}</p>
+        <a href="{{ .Permalink }}" class="read-more">Read the post &rarr;</a>
+    </article>
+    {{ end }}
+    {{ if gt (len $featured) 1 }}
+    <div class="blog-featured-grid">
+        {{ range after 1 $featured }}
+        <article class="home-blog-card">
+            {{ with .Params.pillar }}<span class="post-kind">{{ . }}</span>{{ end }}
+            <h3 class="home-blog-card-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+            <div class="home-card-meta"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>{{ if and $site.Params.show_reading_time .ReadingTime }} &middot; {{ .ReadingTime }} min{{ end }}</div>
+            <p class="home-blog-card-excerpt">{{ .Summary | plainify | truncate 120 }}</p>
+            <a href="{{ .Permalink }}" class="read-more">Read &rarr;</a>
+        </article>
+        {{ end }}
+    </div>
+    {{ end }}
+</div>
+{{ end }}
