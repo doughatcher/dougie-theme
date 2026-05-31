@@ -1,5 +1,5 @@
 {
-  "version": "2.1.0",
+  "version": "2.2.0",
   "title": "Dougie",
   "description": "Versatile two-column theme that carries both a microblog timeline and a long-form publication on the same site. Configurable sidebar with profile, social links, From the Blog, Recent Publications, and RSS. Two visual variants — Default (clean editorial) and Starfield Dreams (animated dark). All branding, CTAs, social links, and the share strip are per-site fields — same theme, multiple sites, no forking.",
   "fields": [
@@ -19,6 +19,61 @@
       "placeholder": "Absolute URL to a circular profile photo or square brand mark."
     },
     {
+      "field": "params.show_social_links",
+      "label": "Show social links in sidebar + footer",
+      "type": "boolean"
+    },
+    {
+      "field": "params.linkedin_url",
+      "label": "LinkedIn URL",
+      "placeholder": "https://linkedin.com/in/yourhandle"
+    },
+    {
+      "field": "params.bluesky_url",
+      "label": "Bluesky URL",
+      "placeholder": "https://bsky.app/profile/yourhandle.bsky.social"
+    },
+    {
+      "field": "params.threads_url",
+      "label": "Threads URL",
+      "placeholder": "https://www.threads.com/@yourhandle"
+    },
+    {
+      "field": "params.mastodon_url",
+      "label": "Mastodon URL",
+      "placeholder": "https://mastodon.social/@yourhandle"
+    },
+    {
+      "field": "params.twitter_url",
+      "label": "Twitter / X URL",
+      "placeholder": "https://twitter.com/yourhandle"
+    },
+    {
+      "field": "params.github_url",
+      "label": "GitHub URL",
+      "placeholder": "https://github.com/yourhandle"
+    },
+    {
+      "field": "params.instagram_url",
+      "label": "Instagram URL",
+      "placeholder": "https://instagram.com/yourhandle"
+    },
+    {
+      "field": "params.youtube_url",
+      "label": "YouTube URL",
+      "placeholder": "https://www.youtube.com/@yourhandle"
+    },
+    {
+      "field": "params.microblog_url",
+      "label": "Micro.blog URL",
+      "placeholder": "https://micro.blog/yourhandle"
+    },
+    {
+      "field": "params.email_url",
+      "label": "Email address",
+      "placeholder": "you@example.com (mailto: prefix added automatically)"
+    },
+    {
       "field": "params.consulting_cta_enabled",
       "label": "Show consulting CTA on blog posts",
       "type": "boolean"
@@ -33,12 +88,6 @@
       "field": "params.consulting_cta_url",
       "label": "Consulting CTA link",
       "placeholder": "mailto: or https:// URL the CTA button points at."
-    },
-    {
-      "field": "params.social_links_json",
-      "label": "Social links (JSON array)",
-      "type": "markdown",
-      "placeholder": "[{\"label\":\"LinkedIn\",\"url\":\"https://...\"}, {\"label\":\"Bluesky\",\"url\":\"https://...\"}]"
     },
     {
       "field": "params.share_strip_enabled",
