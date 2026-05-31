@@ -1,5 +1,5 @@
 {
-  "version": "2.5.0",
+  "version": "2.5.1",
   "title": "Dougie",
   "description": "Versatile editorial micro.blog theme that carries a microblog timeline and a long-form publication on one site. Configurable identity layout (left sidebar or full-width top header), homepage composition (feed, magazine, or sectioned cards), six accent palettes, three type pairings, and dark mode. Rich link-preview and YouTube embed cards, share strip, consulting CTA, pagination, and Archive/RSS/JSON footer. Two visual variants (Default editorial + Starfield Dreams). Every choice is configurable per site, so the same theme cleanly carries a C-level publication, an Americana politics site, and a personal timeline without forking.",
   "fields": [
@@ -140,6 +140,10 @@
       "type": "boolean" },
     { "field": "params.show_thumbnails",
       "label": "Show post thumbnails",
-      "type": "boolean" }
+      "type": "boolean" },
+
+    { "field": "params.google_analytics_id",
+      "label": "Google Analytics Measurement ID",
+      "placeholder": "G-XXXXXXXXXX (GA4) or UA-XXXXXXX-X (legacy). Leave blank to disable analytics." }
   ]
 }
