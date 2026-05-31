@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     {{ partial "head.html" . }}
-    <body>
+    <body data-identity="{{ .Site.Params.identity_layout | default "sidebar" }}" data-home="{{ .Site.Params.home_layout | default "feed" }}" data-accent="{{ .Site.Params.accent | default "graphite" }}" data-font="{{ .Site.Params.font_pairing | default "editorial" }}"{{ if .Site.Params.flagline }} data-flagline="true"{{ end }}>
         <!-- Google Tag Manager (noscript) -->
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5849LGK"
         height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -13,6 +13,7 @@
             {{ partial "sidebar.html" . }}
             
             <main class="main-content">
+                {{ partial "topbar.html" . }}
                 {{ partial "horizontal-nav.html" . }}
                 <div class="content-wrapper">
                     <div class="posts-content">

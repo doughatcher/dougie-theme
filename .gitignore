@@ -3,6 +3,9 @@
 public/
 resources/
 
+# Local multi-site preview harness (symlinks into ../backups exports — never commit)
+.preview/
+
 # OS
 .DS_Store
 

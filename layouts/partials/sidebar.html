@@ -47,20 +47,63 @@
     <!-- Publications Section -->
     {{ partial "publications-sidebar.html" . }}
     
-    <!-- Navigation for mobile -->
+    <!-- Primary nav: Blog + Publications + sibling sites (Home/Archive/RSS intentionally
+         omitted — Home is the logo, RSS is the social icon, Archive lives in the footer). -->
     <nav class="sidebar-nav">
-        {{ if .Site.Menus.main }}
+        {{/* micro.blog keeps the nav menu in its UI, not the exported config, so the
+             menu can be empty here. Surface Blog + Publications from content so the
+             rail always has them (de-duped against any real menu entries). */}}
+        {{ $menuNames := slice }}
+        {{ range .Site.Menus.main }}{{ $menuNames = $menuNames | append (lower .Name) }}{{ end }}
+        {{ $hideNav := slice "home" "archive" "rss" }}
         <ul>
+            {{ if and (not (in $menuNames "blog")) (.Site.GetPage "section" "blog") }}
+            <li><a href="{{ "/blog/" | relURL }}">Blog</a></li>
+            {{ end }}
             {{ range .Site.Menus.main }}
+            {{ if not (in $hideNav (lower .Name)) }}
             <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
             {{ end }}
-            
-            <!-- RSS Feed -->
-            {{ with .OutputFormats.Get "rss" }}
-            <li><a href="{{ .Permalink }}" target="_blank">RSS</a></li>
+            {{ end }}
+            {{ if and (not (in $menuNames "publications")) (index .Site.Taxonomies.categories "publications") }}
+            <li><a href="{{ "/categories/publications/" | relURL }}">Publications</a></li>
+            {{ end }}
+            {{/* Sibling sites — cross-links to Doug's other dougie-theme properties.
+                 Set params.sibling_links (array of {name,url}) or params.sibling_links_json
+                 (JSON string, for the micro.blog plugin settings UI). */}}
+            {{ $siblings := .Site.Params.sibling_links }}
+            {{ with .Site.Params.sibling_links_json }}{{ $siblings = . | transform.Unmarshal }}{{ end }}
+            {{ range $siblings }}
+            <li><a href="{{ .url }}" class="sidebar-sibling" rel="me">{{ .name }}</a></li>
             {{ end }}
         </ul>
-        {{ end }}
     </nav>
+
+    <!-- Topics: editorial pillars (from /blog post `pillar` frontmatter), falling
+         back to categories. Matches the prototype rail's pill cloud. -->
+    {{ $pillars := slice }}
+    {{ range (where .Site.RegularPages "Section" "blog") }}
+        {{ with .Params.pillar }}{{ $pillars = $pillars | append . }}{{ end }}
+    {{ end }}
+    {{ $pillars = uniq $pillars }}
+    {{ if $pillars }}
+    <div class="sidebar-topics">
+        <h3 class="sidebar-section-title">Topics</h3>
+        <div class="topic-pills">
+            {{ range $pillars }}
+            <a href="{{ "/blog/" | relURL }}" class="topic-pill">{{ . }}</a>
+            {{ end }}
+        </div>
+    </div>
+    {{ else if .Site.Taxonomies.categories }}
+    <div class="sidebar-topics">
+        <h3 class="sidebar-section-title">Topics</h3>
+        <div class="topic-pills">
+            {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+            <a href="{{ printf "/categories/%s/" ($name | urlize) | relURL }}" class="topic-pill">{{ $name }}</a>
+            {{ end }}
+        </div>
+    </div>
+    {{ end }}
     </div>
 </aside>

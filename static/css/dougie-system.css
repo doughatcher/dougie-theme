@@ -1,0 +1,356 @@
+/* ============================================================================
+   dougie-system.css  —  Dougie theme refactor layer (v2.5)
+   ----------------------------------------------------------------------------
+   Loads AFTER main.css. Drives the editorial look, accent palettes, font
+   pairings, and the sidebar / top-header + homepage layout modes entirely
+   through the existing shadcn-style HSL token system in main.css, plus a set
+   of [data-*] attributes emitted on <body> from plugin params.
+
+   Nothing here rewrites main.css — it only re-points design tokens and adds
+   the new layout/embeds polish. Per-site config (plugin.json fields) selects
+   which palette/layout/font is active. The Starfield variant still overrides
+   this via static/themes/starfield/theme.css (loaded later).
+   ============================================================================ */
+
+/* ---- 1. Type system -------------------------------------------------------
+   Replaces Inter with an editorial pairing. Serif headings come from the
+   font-family vars below; the [data-font] rules near the bottom swap them.   */
+:root,
+html {
+  --font-sans:  "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-mono:  "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --head-weight: 560;
+}
+
+/* ---- 2. Editorial palette (black on white, neutral greys) ------------------
+   Overrides the soft-grey/sage defaults. Pure-ish paper, near-ink text,
+   graphite as the default accent. Sites pick a louder accent via data-accent. */
+:root,
+html,
+html.light {
+  --background: 0 0% 100%;          /* paper */
+  --foreground: 240 6% 9%;          /* ink   */
+  --card: 240 6% 98%;
+  --card-foreground: 240 6% 9%;
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 46%;
+  --secondary: 240 5% 96%;
+  --secondary-foreground: 240 6% 12%;
+  --border: 240 6% 90%;
+  --input: 240 6% 90%;
+  --radius: 0.625rem;
+  /* default accent = graphite (monochrome editorial) */
+  --primary: 240 6% 11%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 240 6% 11%;
+}
+html.dark {
+  --background: 240 9% 5%;
+  --foreground: 0 0% 96%;
+  --card: 240 8% 9%;
+  --card-foreground: 0 0% 96%;
+  --muted: 240 6% 14%;
+  --muted-foreground: 240 5% 62%;
+  --secondary: 240 6% 14%;
+  --secondary-foreground: 0 0% 96%;
+  --border: 240 6% 16%;
+  --input: 240 6% 16%;
+  --primary: 0 0% 92%;
+  --primary-foreground: 240 9% 6%;
+  --ring: 0 0% 92%;
+}
+
+html { font-family: var(--font-sans); }
+
+/* Editorial heading treatment (serif + tight tracking) */
+h1, h2, h3,
+.post-title, .single-post-title,
+.profile-name, .mobile-site-title,
+.from-the-blog-title, .publication-title,
+.page-title {
+  font-family: var(--font-serif);
+  font-weight: var(--head-weight);
+  letter-spacing: -0.01em;
+}
+
+/* Section eyebrows / meta in mono (the indie-web register) */
+.sidebar-section-title,
+.post-meta time,
+.from-the-blog-meta,
+.reading-time, .word-count,
+.feed-links, .link-preview-url {
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+/* ---- 3. Accent palettes (the official-theme color variants) ---------------
+   Set on <body data-accent="..."> from params.accent. Each redefines --primary
+   (+ --ring) for light and dark. "graphite" is the editorial default above.   */
+body[data-accent="emerald"]  { --primary: 162 70% 33%; --ring: 162 70% 33%; }
+body[data-accent="cobalt"]   { --primary: 222 78% 52%; --ring: 222 78% 52%; }
+body[data-accent="crimson"]  { --primary: 352 62% 49%; --ring: 352 62% 49%; }
+body[data-accent="amber"]    { --primary: 36 78% 40%;  --ring: 36 78% 40%; }
+body[data-accent="violet"]   { --primary: 256 56% 58%; --ring: 256 56% 58%; }
+html.dark body[data-accent="emerald"] { --primary: 162 60% 46%; --ring: 162 60% 46%; }
+html.dark body[data-accent="cobalt"]  { --primary: 222 78% 66%; --ring: 222 78% 66%; }
+html.dark body[data-accent="crimson"] { --primary: 352 75% 64%; --ring: 352 75% 64%; }
+html.dark body[data-accent="amber"]   { --primary: 36 82% 56%;  --ring: 36 82% 56%; }
+html.dark body[data-accent="violet"]  { --primary: 256 80% 72%; --ring: 256 80% 72%; }
+
+/* ---- 4. Font pairings -----------------------------------------------------
+   data-font: editorial (default) | sans | literary                          */
+body[data-font="sans"] h1, body[data-font="sans"] h2, body[data-font="sans"] h3,
+body[data-font="sans"] .post-title, body[data-font="sans"] .profile-name,
+body[data-font="sans"] .from-the-blog-title {
+  font-family: var(--font-sans);
+  --head-weight: 600;
+}
+body[data-font="literary"] {
+  --font-sans: "Newsreader", Georgia, serif;
+}
+body[data-font="literary"] .post-body { font-size: 1.075rem; }
+
+/* ---- 5. Sidebar rail — matched to the Dougie prototype (.dg-rail) ----------
+   288px rail, calm/transparent fill, hairline divider, editorial type. Maps the
+   prototype's .dg-* spec onto the theme's real .sidebar markup.               */
+:root, html { --sidebar-width: 288px; }
+.sidebar {
+  background-color: transparent;
+  border-right: 1px solid hsl(var(--border));
+}
+.sidebar-content { padding: 30px 28px 40px; display: flex; flex-direction: column; gap: 22px; }
+.profile-section { display: flex; flex-direction: column; gap: 14px; }
+
+/* avatar: prominent circle (image or monogram) */
+.profile-avatar { width: 104px; height: 104px; border-radius: 50%; object-fit: cover; }
+.profile-name { font-size: 21px; line-height: 1.15; margin: 0; }
+.profile-bio { color: hsl(var(--muted-foreground)); font-size: 14px; margin: 4px 0 0; }
+
+/* social: 30px outlined circles, accent on hover */
+.sidebar .social-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
+.sidebar .social-links .social-link {
+  width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid hsl(var(--border)); border-radius: 50%;
+  color: hsl(var(--muted-foreground)); transition: color .15s, border-color .15s;
+}
+.sidebar .social-links .social-link svg { width: 15px; height: 15px; }
+.sidebar .social-links .social-link:hover { color: hsl(var(--primary)); border-color: hsl(var(--primary)); }
+
+/* nav: hairline rule above, calm 14.5px links. The base theme hides .sidebar-nav
+   on desktop (nav used to come from the floating bar / callouts); the prototype
+   rail shows it inline, so re-enable it here. Mobile media query still hides it. */
+.sidebar-nav { display: block; border-top: 1px solid hsl(var(--border)); padding-top: 22px; margin: 0; }
+.sidebar-nav ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 11px; }
+.sidebar-nav a { font-size: 14.5px; color: hsl(var(--muted-foreground)); transition: color .12s; }
+.sidebar-nav a:hover, .sidebar-nav a.active { color: hsl(var(--foreground)); }
+
+/* section eyebrows (Topics / From the Blog / Recent Publications) */
+.sidebar-section-title, .from-the-blog-title.sidebar-section-title {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: hsl(var(--muted-foreground)); margin: 0 0 10px;
+}
+
+/* topics: pill cloud (categories) */
+.sidebar-topics .topic-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.topic-pill {
+  display: inline-flex; align-items: center; font-family: var(--font-mono); font-size: 10.5px;
+  font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  color: hsl(var(--foreground)); border: 1px solid hsl(var(--border)); border-radius: 999px;
+  padding: 3px 9px; white-space: nowrap; transition: color .15s, border-color .15s;
+}
+.topic-pill:hover { color: hsl(var(--primary)); border-color: hsl(var(--primary)); }
+
+.main-content { padding: 46px 52px 96px; }
+.posts-content, .content-wrapper { max-width: 768px; }
+
+/* Calmer post rows: drop the heavy card chrome on the timeline, use rules. */
+.post-preview {
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid hsl(var(--border));
+  border-radius: 0;
+  padding: 1.6rem 0;
+}
+.micro-post {
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid hsl(var(--border));
+  border-radius: 0;
+  padding: 1.6rem 0;
+}
+.post-title { font-size: 1.55rem; line-height: 1.18; }
+
+/* Content-type chip (added in templates as .post-kind) */
+.post-kind {
+  display: inline-flex; align-items: center;
+  font-family: var(--font-mono); font-size: 0.625rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border)); border-radius: 999px;
+  padding: 0.18rem 0.55rem; margin-right: 0.6rem;
+}
+/* row header: chip + date aligned, small mono date (was inheriting full body size,
+   which made it look bigger than the note text next to it) */
+.post-content-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.65rem; }
+.post-kind-date-link { color: inherit; }
+.post-kind-date { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.04em;
+  color: hsl(var(--muted-foreground)); transition: color .15s; }
+.post-kind-date-link:hover .post-kind-date { color: hsl(var(--primary)); }
+
+/* Consistent note/post body: comfortable size, flush left (no indent). */
+.post-preview .post-body, .micro-post .post-body { font-size: 1.0rem; line-height: 1.6; margin: 0; padding: 0; }
+.post-preview .post-body > :first-child { margin-top: 0; }
+
+/* The base theme boxes link-only paragraphs with a left border + padding + 🔗 emoji,
+   which indents them out of line with the surrounding text and duplicates the dougie
+   link-preview cards. Flatten to clean inline links so note paragraphs stay aligned. */
+.post-body p:has(> a[href^="http"]:first-child:last-child) a,
+.post-content p:has(> a[href^="http"]:first-child:last-child) a {
+  display: inline; padding: 0; background: none; border: 0; border-radius: 0;
+  font-size: inherit; font-weight: inherit; transform: none;
+  color: hsl(var(--primary)); text-decoration: underline; text-decoration-color: hsl(var(--primary) / 0.4);
+}
+.post-body p:has(> a[href^="http"]:first-child:last-child) a::before,
+.post-content p:has(> a[href^="http"]:first-child:last-child) a::before { content: none; }
+.post-body p:has(> a[href^="http"]:first-child:last-child) a:hover,
+.post-content p:has(> a[href^="http"]:first-child:last-child) a:hover { transform: none; background: none; }
+
+/* ---- 6. Embeds: link-preview + youtube cards ------------------------------ */
+.link-preview-card {
+  display: block; border: 1px solid hsl(var(--border));
+  border-radius: 0.75rem; overflow: hidden; margin: 0.85rem 0;
+  background-color: hsl(var(--card)); transition: border-color .15s, transform .15s;
+}
+.link-preview-card:hover { border-color: hsl(var(--muted-foreground) / 0.4); transform: translateY(-1px); }
+.link-preview-image img { width: 100%; display: block; aspect-ratio: 1.9 / 1; object-fit: cover; }
+.link-preview-content { padding: 0.85rem 1rem 0.95rem; }
+.link-preview-title { font-family: var(--font-serif); font-weight: var(--head-weight); font-size: 1.05rem; line-height: 1.25; margin-bottom: 0.3rem; }
+.link-preview-description { color: hsl(var(--muted-foreground)); font-size: 0.85rem; margin-bottom: 0.5rem; }
+.link-preview-url { font-size: 0.72rem; color: hsl(var(--muted-foreground)); }
+
+/* YouTube facade (rendered by link-previews.js as .yt-embed / .dougie-yt) */
+.dougie-yt { position: relative; aspect-ratio: 16 / 9; border-radius: 0.75rem; overflow: hidden;
+  background: repeating-linear-gradient(135deg,#1c1c20 0 9px,#26262c 9px 18px); margin: 0.85rem 0; }
+.dougie-yt .dougie-yt-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 62px; height: 43px; border-radius: 11px; background: #e23b2e; }
+.dougie-yt .dougie-yt-play::after { content: ""; position: absolute; top: 50%; left: 54%;
+  transform: translate(-50%,-50%); border: 9px solid transparent; border-left: 15px solid #fff; }
+.dougie-yt .dougie-yt-pill { position: absolute; right: 12px; bottom: 12px; background: rgba(0,0,0,.72);
+  color: #fff; font-family: var(--font-mono); font-size: 0.7rem; padding: 0.32rem 0.6rem; border-radius: 6px; }
+
+/* ---- 7. Accent application ------------------------------------------------- */
+a.tag:hover, .syndication-link, .nav-link.active, .from-the-blog-see-all,
+.feed-links a:hover, .pagination a:hover, .read-more {
+  color: hsl(var(--primary));
+}
+.btn-primary, .from-the-blog-footer .from-the-blog-see-all.is-button {
+  background-color: hsl(var(--primary)); color: hsl(var(--primary-foreground));
+}
+
+/* ---- 8. Footer: pagination + feed links ----------------------------------- */
+.dougie-foot {
+  max-width: 760px; margin: 3rem 0 0; padding: 1.75rem 0 0;
+  border-top: 1px solid hsl(var(--border));
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+.dougie-foot .feed-links { font-family: var(--font-mono); font-size: 0.75rem; color: hsl(var(--muted-foreground)); }
+.dougie-foot .feed-links a { color: inherit; border-bottom: 1px solid hsl(var(--border)); }
+.dougie-foot .pagination, .dougie-foot nav#post-nav { display: flex; gap: 1.25rem; margin: 0; }
+.dougie-foot .pagination a, .dougie-foot nav#post-nav a {
+  font-family: var(--font-mono); font-size: 0.78rem; color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border)); border-radius: 0.55rem; padding: 0.5rem 0.85rem; background: transparent;
+}
+.dougie-foot .pagination a:hover, .dougie-foot nav#post-nav a:hover { border-color: hsl(var(--primary)); color: hsl(var(--primary)); }
+
+/* ---- 9. Top-header layout mode (data-identity="topbar") --------------------
+   Hides the left rail, shows the .dougie-topbar partial, and lets content run
+   full width (centered). Falls back to the normal sidebar on mobile.          */
+.dougie-topbar { display: none; }
+body[data-identity="topbar"] .sidebar { display: none; }
+body[data-identity="topbar"] .main-content { margin-left: 0; }
+body[data-identity="topbar"] .dougie-topbar {
+  display: block; border-bottom: 1px solid hsl(var(--border));
+  padding: 1.5rem 3.25rem 0; position: sticky; top: 0; z-index: 10;
+  background: hsl(var(--background));
+}
+.dougie-topbar-row { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; max-width: 1160px; margin: 0 auto; }
+.dougie-topbar-id { display: flex; align-items: center; gap: 0.9rem; }
+.dougie-topbar-id img { width: 46px; height: 46px; border-radius: 50%; }
+.dougie-topbar-nav { max-width: 1160px; margin: 1rem auto 0; padding-bottom: 0.85rem; display: flex; gap: 1.6rem;
+  font-family: var(--font-mono); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+body[data-identity="topbar"] .posts-content,
+body[data-identity="topbar"] .content-wrapper { max-width: 1100px; margin: 0 auto; }
+body[data-identity="topbar"] .dougie-foot { max-width: 1100px; margin-left: auto; margin-right: auto; }
+
+/* ---- 10. Homepage composition modes (data-home) ---------------------------
+   "feed" = default single column. "magazine" + "sectioned" add grid framing
+   to the markup the index template emits under .home-magazine / .home-sectioned. */
+.home-magazine .post-preview:first-child { border-bottom: 1px solid hsl(var(--border)); padding-bottom: 2rem; }
+.home-magazine .post-preview:first-child .post-title { font-size: 2.3rem; line-height: 1.08; }
+.home-magazine .home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem 2.25rem; margin-top: 2rem; align-items: start; }
+.home-magazine .home-grid .post-preview { border-top: 2px solid hsl(var(--foreground)); border-bottom: 0; padding: 0.9rem 0 0; }
+/* Uniform teaser cards: clamp body to a few lines and drop heavy embeds so every
+   card in the grid reads at the same weight regardless of the underlying post. */
+.home-magazine .home-grid .post-body {
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
+  overflow: hidden; color: hsl(var(--muted-foreground)); font-size: 0.95rem;
+}
+/* teaser cards are text-only: drop embeds, images, and JS-injected preview wrappers */
+.home-magazine .home-grid .post-body > :not(p) { display: none; }
+.home-magazine .home-grid .post-title { font-size: 1.25rem; line-height: 1.2; }
+.home-sectioned .home-section-title { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: hsl(var(--muted-foreground)); margin: 2rem 0 1rem; }
+.home-sectioned .post-preview { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 0.75rem; padding: 1.4rem 1.5rem; margin-bottom: 0.9rem; }
+
+/* Magazine bottom sections: fuller From-the-Blog + Recent Publications */
+.home-section { margin-top: 3rem; }
+.home-section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+  border-top: 1px solid hsl(var(--border)); padding-top: 1.5rem; margin-bottom: 1.4rem; }
+.home-section-title { font-family: var(--font-serif); font-weight: var(--head-weight); font-size: 1.4rem; line-height: 1.1; margin: 0; }
+.read-more { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.02em; color: hsl(var(--primary));
+  border-bottom: 1.5px solid hsl(var(--primary)); padding-bottom: 1px; white-space: nowrap; }
+.home-blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.75rem 2.25rem; }
+.home-blog-card { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+.home-blog-card-title { font-family: var(--font-serif); font-weight: var(--head-weight); font-size: 1.2rem; line-height: 1.2; margin: 0.25rem 0 0; }
+.home-card-meta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.02em; color: hsl(var(--muted-foreground)); }
+.home-blog-card-excerpt { color: hsl(var(--muted-foreground)); font-size: 0.95rem; line-height: 1.5; margin: 0.2rem 0 0.4rem; }
+.home-pubs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.6rem 1.75rem; align-items: start; }
+.home-pubs-grid .publication-item { display: flex; flex-direction: column; gap: 0.55rem; }
+.home-pubs-grid .publication-thumbnail { aspect-ratio: 1.6 / 1; border-radius: 0.6rem; overflow: hidden; border: 1px solid hsl(var(--border)); }
+.home-pubs-grid .publication-thumbnail a { display: block; width: 100%; height: 100%; }
+.home-pubs-grid .publication-thumbnail img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* striped placeholder for publications with no fetchable image (keeps cards uniform) */
+.home-pubs-grid .publication-thumbnail-empty { background: repeating-linear-gradient(135deg, hsl(var(--muted) / 0.5) 0 7px, hsl(var(--card)) 7px 14px); }
+.home-pubs-grid .publication-content-wrapper { display: flex; flex-direction: column; gap: 0.3rem; }
+.home-pubs-grid .publication-title { font-family: var(--font-serif); font-weight: var(--head-weight); font-size: 1rem; line-height: 1.22; margin: 0; }
+.home-pubs-grid .publication-title a { color: hsl(var(--foreground)); transition: color .15s; }
+.home-pubs-grid .publication-title a:hover { color: hsl(var(--primary)); }
+
+/* ---- 11. Americana flair (leaning.blue) — data-flagline="true" ------------- */
+body[data-flagline="true"]::before {
+  content: ""; position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 100;
+  background: linear-gradient(90deg, #b22234 0 33.3%, #ffffff 33.3% 66.6%, #1d4e9c 66.6% 100%);
+}
+
+/* ---- 12. Dark-mode toggle (.dg-themetoggle) -------------------------------
+   The base theme only positions .site-controls inside theme-switcher.html, which
+   is gated on show_theme_chooser — so with the chooser off the toggle fell into
+   normal flow and scrolled / got clipped. Pin it here, always, top-left of the
+   rail like the prototype, with a full 36px hit area.                          */
+.site-controls { position: fixed; top: 22px; left: 22px; z-index: 60; display: flex; gap: 0.6rem; align-items: center; }
+.dark-mode-toggle {
+  width: 36px; height: 36px; flex: none; display: inline-flex; align-items: center; justify-content: center;
+  background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 9px;
+  color: hsl(var(--muted-foreground)); cursor: pointer; padding: 0; transition: color .15s, border-color .15s;
+}
+.dark-mode-toggle:hover { color: hsl(var(--primary)); border-color: hsl(var(--primary)); }
+.dark-mode-toggle svg { width: 17px; height: 17px; }
+/* show the icon for the *opposite* of the current mode */
+html.light .dark-mode-toggle .sun-icon,
+html.dark  .dark-mode-toggle .moon-icon { display: none; }
+/* topbar mode: tuck it into the top-right controls instead of the corner */
+body[data-identity="topbar"] .site-controls { position: static; }
+
+/* On the topbar layout the rail is hidden, so reclaim the corner for content. */
+@media (max-width: 780px){ .site-controls { top: 14px; left: 14px; } }

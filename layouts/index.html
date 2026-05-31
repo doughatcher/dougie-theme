@@ -1,39 +1,46 @@
 {{ define "main" }}
-<div class="posts-list">
-    {{ $paginator := .Paginate (where (where .Site.RegularPages ".Params.microblog" "!=" false) "Type" "in" (slice "post" "posts")) (.Site.Params.posts_per_page | default 20) }}
-    
-    {{ range $paginator.Pages }}
+{{ $home := .Site.Params.home_layout | default "feed" }}
+{{ $paginator := .Paginate (where (where .Site.RegularPages ".Params.microblog" "!=" false) "Type" "in" (slice "post" "posts")) (.Site.Params.posts_per_page | default 20) }}
+{{ $total := len $paginator.Pages }}
+<div class="posts-list home-{{ $home }}">
+
+    {{ range $i, $p := $paginator.Pages }}
+    {{ with $p }}
+    {{ if and (eq $home "magazine") (eq $i 1) (gt $total 1) }}<div class="home-grid">{{ end }}
     <article class="post-preview{{ if .Params.microblog }} micro-post{{ end }}">
         {{ if and (not .Params.microblog) .Params.thumbnail .Site.Params.show_thumbnails }}
         <div class="post-thumbnail">
             <img src="{{ .Params.thumbnail }}" alt="Post thumbnail" loading="lazy">
         </div>
         {{ end }}
-        
+
         <div class="post-content">
+            <div class="post-content-head">
+                <span class="post-kind">{{ if .Params.microblog }}Note{{ else }}Post{{ end }}</span>
+                <a href="{{ .RelPermalink }}" class="post-kind-date-link">
+                    <time class="post-kind-date" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+                </a>
+            </div>
+
             {{ if and (not .Params.microblog) .Title }}
             <h2 class="post-title">
                 <a href="{{ .RelPermalink }}">{{ .Title }}</a>
             </h2>
             {{ end }}
-            
+
             <div class="post-body">
                 {{ .Content }}
             </div>
-            
+
             <div class="post-meta">
-                <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
-                    <a href="{{ .RelPermalink }}">{{ .Date.Format "Jan 2, 2006" }}</a>
-                </time>
-                
                 {{ if and (not .Params.microblog) .Site.Params.show_word_count }}
                 <span class="word-count">{{ .WordCount }} words</span>
                 {{ end }}
-                
+
                 {{ if and (not .Params.microblog) .Site.Params.show_reading_time }}
                 <span class="reading-time">{{ .ReadingTime }} min read</span>
                 {{ end }}
-                
+
                 {{ if .Params.tags }}
                 <div class="post-tags">
                     {{ range .Params.tags }}
@@ -41,7 +48,7 @@
                     {{ end }}
                 </div>
                 {{ end }}
-                
+
                 <!-- Social syndication links -->
                 {{ if or .Params.mastodon .Params.bluesky .Params.threads .Params.linkedin }}
                 <div class="syndication-links">
@@ -63,23 +70,83 @@
         </div>
     </article>
     {{ end }}
-    
-    {{ if gt $paginator.TotalPages 1 }}
-    <nav class="pagination">
-        {{ if $paginator.HasPrev }}
-        <a href="{{ $paginator.Prev.URL }}" class="prev">← Newer Posts</a>
-        {{ end }}
-        
-        {{ if $paginator.HasNext }}
-        <a href="{{ $paginator.Next.URL }}" class="next">Older Posts →</a>
-        {{ end }}
-    </nav>
     {{ end }}
-    
-    <div class="feed-links">
-        <a href="{{ "/archive/" | relURL }}">Archive</a> • 
-        <a href="{{ "feed.xml" | absURL }}">RSS</a> • 
-        <a href="{{ "feed.json" | absURL }}">JSON Feed</a>
+    {{ if and (eq $home "magazine") (gt $total 1) }}</div>{{ end }}
+
+    {{/* Fuller "From the Blog" + "Recent Publications" sections below the timeline
+         (these replace the sidebar callouts). Shown for feed + magazine. */}}
+    {{ if ne $home "sectioned" }}
+    {{ $blogPosts := first 4 (where .Site.RegularPages "Section" "blog") }}
+    {{ if $blogPosts }}
+    <section class="home-section">
+        <div class="home-section-head">
+            <h2 class="home-section-title">From the Blog</h2>
+            <a href="{{ "/blog/" | relURL }}" class="read-more">View all posts &rarr;</a>
+        </div>
+        <div class="home-blog-grid">
+            {{ range $blogPosts }}
+            <article class="home-blog-card">
+                {{ with .Params.pillar }}<span class="post-kind">{{ . }}</span>{{ end }}
+                <h3 class="home-blog-card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+                <div class="home-card-meta"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>{{ if .ReadingTime }} &middot; {{ .ReadingTime }} min read{{ end }}</div>
+                <p class="home-blog-card-excerpt">{{ .Summary | plainify | truncate 150 }}</p>
+                <a href="{{ .RelPermalink }}" class="read-more">Read the post &rarr;</a>
+            </article>
+            {{ end }}
+        </div>
+    </section>
+    {{ end }}
+
+    {{ $pubsCat := index .Site.Taxonomies.categories "publications" }}
+    {{ if $pubsCat }}
+    <section class="home-section">
+        <div class="home-section-head">
+            <h2 class="home-section-title">Recent Publications</h2>
+            <a href="{{ "/categories/publications/" | relURL }}" class="read-more">All publications &rarr;</a>
+        </div>
+        <div class="home-pubs-grid">
+            {{ range first 4 $pubsCat.Pages }}
+            {{ $thumb := "" }}{{ if .Params.thumbnail }}{{ $thumb = .Params.thumbnail }}{{ else if .Params.photos }}{{ $thumb = index .Params.photos 0 }}{{ else if .Params.images }}{{ $thumb = index .Params.images 0 }}{{ end }}
+            {{/* .publication-item / .publication-title / .publication-content-wrapper are the
+                 hooks publication-thumbnails.js scans to lazy-load og:image / first-image thumbs. */}}
+            <article class="publication-item">
+                {{/* Always render the thumbnail slot; publication-thumbnails.js fills the
+                     <a> with an og:image / first-post-image when one exists, otherwise the
+                     striped placeholder keeps every card uniform. */}}
+                <div class="publication-thumbnail{{ if not $thumb }} publication-thumbnail-empty{{ end }}">
+                    <a href="{{ .RelPermalink }}">{{ if $thumb }}<img src="{{ $thumb }}" alt="{{ .Title }}" loading="lazy">{{ end }}</a>
+                </div>
+                <div class="publication-content-wrapper">
+                    <h3 class="publication-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+                    <time class="home-card-meta" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+                </div>
+            </article>
+            {{ end }}
+        </div>
+    </section>
+    {{ end }}
+    {{ end }}
+
+    <!-- Footer: pagination + feed links -->
+    <div class="dougie-foot">
+        {{ if .Site.Params.show_footer_feeds | default true }}
+        <div class="feed-links">
+            <a href="{{ "/archive/" | relURL }}">Archive</a> &bull;
+            <a href="{{ "feed.xml" | absURL }}">RSS</a> &bull;
+            <a href="{{ "feed.json" | absURL }}">JSON Feed</a>
+        </div>
+        {{ end }}
+
+        {{ if gt $paginator.TotalPages 1 }}
+        <nav class="pagination">
+            {{ if $paginator.HasPrev }}
+            <a href="{{ $paginator.Prev.URL }}" class="prev">&larr; Newer Posts</a>
+            {{ end }}
+            {{ if $paginator.HasNext }}
+            <a href="{{ $paginator.Next.URL }}" class="next">Older Posts &rarr;</a>
+            {{ end }}
+        </nav>
+        {{ end }}
     </div>
 </div>
 {{ end }}

@@ -1,0 +1,33 @@
+<!-- Top-header identity layout. Shown only when params.identity_layout = "topbar"
+     (visibility controlled by dougie-system.css). Mirrors the sidebar identity
+     block horizontally and runs content full-width. -->
+<header class="dougie-topbar">
+    <div class="dougie-topbar-row">
+        <div class="dougie-topbar-id">
+            {{ if and .Site.Params.show_avatar .Site.Params.avatar }}
+            <a href="{{ "/" | relURL }}"><img src="{{ .Site.Params.avatar }}" alt="{{ .Site.Title }}"></a>
+            {{ end }}
+            <div>
+                <h1 class="profile-name" style="margin:0;font-size:1.3rem;"><a href="{{ "/" | relURL }}">{{ .Site.Title }}</a></h1>
+                {{ if and .Site.Params.show_bio .Site.Params.bio }}
+                <p class="profile-bio" style="margin:.15rem 0 0;">{{ .Site.Params.bio }}</p>
+                {{ end }}
+            </div>
+        </div>
+        {{ if .Site.Params.show_social_links }}
+        <div class="dougie-topbar-social">{{ partial "social-links.html" . }}</div>
+        {{ end }}
+    </div>
+    <nav class="dougie-topbar-nav">
+        {{ $cur := . }}
+        <a href="{{ "/" | relURL }}" class="nav-link{{ if eq $cur.RelPermalink "/" }} active{{ end }}">Home</a>
+        {{ range .Site.Menus.main }}
+        {{ if ne .URL "/" }}
+        <a href="{{ .URL | relURL }}" class="nav-link{{ if hasPrefix $cur.RelPermalink .URL }} active{{ end }}">{{ .Name }}</a>
+        {{ end }}
+        {{ end }}
+        {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+        <a href="{{ printf "/categories/%s/" ($name | urlize) | relURL }}" class="nav-link">{{ $name | title }}</a>
+        {{ end }}
+    </nav>
+</header>
