@@ -389,5 +389,36 @@ html.dark  .dark-mode-toggle .moon-icon { display: none; }
 /* topbar mode: tuck it into the top-right controls instead of the corner */
 body[data-identity="topbar"] .site-controls { position: static; }
 
-/* On the topbar layout the rail is hidden, so reclaim the corner for content. */
-@media (max-width: 780px){ .site-controls { bottom: 14px; left: 14px; } }
+/* ---- 13. Mobile (≤768px) ---------------------------------------------------
+   DESKTOP IS UNTOUCHED — every rule below lives inside the media query.
+   On mobile the floating control cluster is awkward (it overlaps content, and
+   in topbar mode it lands at the very top). Hide it and render the light/dark
+   toggle inline in the (mobile-only) site footer instead. The content/topbar
+   nav becomes one swipeable row so tabs + Topics never wrap to a clipped second
+   row, and the Topics menu opens as a fixed bottom sheet (a horizontal-scroll
+   container would otherwise clip an absolutely-positioned dropdown).            */
+@media (max-width: 768px) {
+  /* hide the floating cluster; the footer toggle takes over. Higher specificity
+     than the base + topbar .site-controls rules, and later in source. */
+  body[data-identity] .site-controls { display: none; }
+
+  /* inline footer toggle (only ever visible inside the mobile-only .site-footer) */
+  .footer-theme-toggle { display: flex; justify-content: center; margin-top: 1.5rem; }
+
+  /* one swipeable row — no wrap to a clipped second row */
+  .content-tabs, .dougie-topbar-nav {
+    flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; gap: 1.15rem;
+  }
+  .content-tabs::-webkit-scrollbar, .dougie-topbar-nav::-webkit-scrollbar { display: none; }
+  .content-tabs > *, .dougie-topbar-nav > * { flex: 0 0 auto; white-space: nowrap; }
+
+  /* Topics menu → fixed bottom sheet so the scroll container can't clip it */
+  .content-tab-menu {
+    position: fixed; left: 0; right: 0; bottom: 0; top: auto;
+    flex-direction: row; flex-wrap: wrap; align-items: flex-start; min-width: 0;
+    border-radius: 14px 14px 0 0; gap: 0.6rem;
+    padding: 1rem 1.15rem calc(1rem + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -12px 30px hsl(var(--foreground) / 0.18); z-index: 1000;
+  }
+}

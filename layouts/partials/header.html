@@ -47,33 +47,28 @@
         
         // Wait for DOM to be ready
         document.addEventListener('DOMContentLoaded', function() {
-            const toggle = document.getElementById('dark-mode-toggle');
-            if (!toggle) {
-                console.error('Toggle button not found!');
+            // Bind every dark-mode toggle on the page — the floating one (desktop)
+            // and the inline footer one (mobile) share the same class.
+            const toggles = document.querySelectorAll('.dark-mode-toggle');
+            if (!toggles.length) {
+                console.error('No dark-mode toggle found!');
                 return;
             }
-            
-            console.log('Toggle button found, attaching listener');
-            
-            // Toggle theme on click
-            toggle.addEventListener('click', function() {
+
+            function toggleTheme() {
                 const isDark = html.classList.contains('dark');
-                console.log('Toggle clicked. Currently dark?', isDark);
-                
                 if (isDark) {
                     html.classList.remove('dark');
                     html.classList.add('light');
                     localStorage.setItem('theme', 'light');
-                    console.log('Switched to light mode');
                 } else {
                     html.classList.remove('light');
                     html.classList.add('dark');
                     localStorage.setItem('theme', 'dark');
-                    console.log('Switched to dark mode');
                 }
-                
-                console.log('HTML classes:', html.className);
-            });
+            }
+
+            toggles.forEach(function(t) { t.addEventListener('click', toggleTheme); });
         });
     })();
 </script>
