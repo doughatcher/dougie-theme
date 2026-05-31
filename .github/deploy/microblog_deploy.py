@@ -251,7 +251,7 @@ class MicroblogDeployer:
         
         return False
     
-    def deploy(self, reload=True, rebuild=True, monitor=True):
+    def deploy(self, reload=True, rebuild=True, monitor=True, timeout=60):
         """Execute deployment sequence"""
         print("🚀 Micro.blog Deployment")
         print("=" * 60)
@@ -278,11 +278,14 @@ class MicroblogDeployer:
                 success = False
             time.sleep(2)  # Brief pause before monitoring
         
-        # Monitor build by polling check endpoint
+        # Monitor build by polling the check endpoint. Best-effort only: the reload
+        # + rebuild are already triggered and Micro.blog finishes the build async,
+        # so a polling timeout means "we stopped watching", NOT a deploy failure.
         if monitor and rebuild:
             print()
-            if not self.poll_check_endpoint():
-                success = False
+            if not self.poll_check_endpoint(timeout=timeout):
+                print("   ℹ️  Monitor window ended before build finished — build continues on")
+                print("      Micro.blog; treating reload+rebuild as success.")
         
         print()
         print("=" * 60)
@@ -326,12 +329,13 @@ def main():
             sys.exit(0 if success else 1)
         
         if args.all:
-            success = deployer.deploy(reload=True, rebuild=True, monitor=True)
+            success = deployer.deploy(reload=True, rebuild=True, monitor=True, timeout=args.timeout)
         else:
             success = deployer.deploy(
                 reload=args.reload,
                 rebuild=args.rebuild,
-                monitor=args.monitor
+                monitor=args.monitor,
+                timeout=args.timeout
             )
         
         sys.exit(0 if success else 1)
