@@ -61,15 +61,18 @@ aside *,
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-/* Glass effect for main content area - LCARS accent */
+/* Glass effect for main content area — only the blur, no chrome.
+   Per Doug's adjustment 2026-05-30: drop the dark tint, border, and
+   box-shadow so the container reads as pure blur over the starfield
+   instead of a visible card. */
 .content,
 main,
 .site-content {
-  background: rgba(15, 10, 25, 0.65);
+  /* background: rgba(15, 10, 25, 0.65); */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(153, 153, 255, 0.15); /* Blue accent */
-  box-shadow: 0 8px 32px 0 rgba(51, 102, 204, 0.2);
+  /* border: 1px solid rgba(153, 153, 255, 0.15); */
+  /* box-shadow: 0 8px 32px 0 rgba(51, 102, 204, 0.2); */
 }
 
 html.light .content,
