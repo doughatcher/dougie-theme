@@ -119,6 +119,11 @@ body[data-font="literary"] .post-body { font-size: 1.075rem; }
   background-color: transparent;
   border-right: 1px solid hsl(var(--border));
   margin: 0;   /* kill a stray 16px margin that left a gap at the top of the rail divider */
+  /* Top-align the rail. The base theme centers it (justify-content:center), but a
+     centered + overflow:auto flex column CLIPS the top when content is tall (e.g. a
+     long Topics list) — making the avatar unreachable. flex-start keeps the avatar
+     at the top, always visible, with overflow scrolling down through the rest. */
+  justify-content: flex-start;
 }
 .sidebar-content { padding: 30px 28px 40px; display: flex; flex-direction: column; gap: 22px; }
 .profile-section { display: flex; flex-direction: column; gap: 14px; }

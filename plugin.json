@@ -97,6 +97,12 @@
     { "field": "params.show_publications_sidebar",
       "label": "Show \"Recent Publications\" sidebar block",
       "type": "boolean" },
+    { "field": "params.hide_topics",
+      "label": "Hide the Topics list (pillars / categories) in the nav",
+      "type": "boolean" },
+    { "field": "params.topics_limit",
+      "label": "Max Topics to show",
+      "placeholder": "Number — caps how many topic pills show (blank = all). Useful for sites with many imported categories." },
 
     { "field": "params.share_strip_enabled",
       "label": "Show share strip on single posts (LinkedIn/X/Bluesky/Reddit/HN/Email/Copy)",

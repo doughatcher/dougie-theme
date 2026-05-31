@@ -86,29 +86,26 @@
     </nav>
     {{ end }}
 
-    <!-- Topics: editorial pillars (from /blog post `pillar` frontmatter), falling
-         back to categories. Matches the prototype rail's pill cloud.
-         Hidden when content_nav_tabs moves Topics into the top tab bar. -->
+    <!-- Topics: editorial pillars (from /blog post `pillar`), falling back to
+         categories. Optional per-site: params.hide_topics to suppress entirely,
+         params.topics_limit (number) to cap how many show (useful when a site has
+         many imported categories). Also hidden when content_nav_tabs is on. -->
     {{ $pillars := slice }}
     {{ range (where .Site.RegularPages "Section" "blog") }}
         {{ with .Params.pillar }}{{ $pillars = $pillars | append . }}{{ end }}
     {{ end }}
     {{ $pillars = uniq $pillars }}
-    {{ if and $pillars (not .Site.Params.content_nav_tabs) }}
+    {{ $pillarMode := gt (len $pillars) 0 }}
+    {{ $topics := $pillars }}
+    {{ if not $pillarMode }}{{ range $name, $t := .Site.Taxonomies.categories }}{{ $topics = $topics | append $name }}{{ end }}{{ end }}
+    {{ $limit := 0 }}{{ with .Site.Params.topics_limit }}{{ $limit = int . }}{{ end }}
+    {{ if and (gt $limit 0) (lt $limit (len $topics)) }}{{ $topics = first $limit $topics }}{{ end }}
+    {{ if and $topics (not .Site.Params.hide_topics) (not .Site.Params.content_nav_tabs) }}
     <div class="sidebar-topics">
         <h3 class="sidebar-section-title">Topics</h3>
         <div class="topic-pills">
-            {{ range $pillars }}
-            <a href="{{ "/blog/" | relURL }}" class="topic-pill">{{ . }}</a>
-            {{ end }}
-        </div>
-    </div>
-    {{ else if and .Site.Taxonomies.categories (not .Site.Params.content_nav_tabs) }}
-    <div class="sidebar-topics">
-        <h3 class="sidebar-section-title">Topics</h3>
-        <div class="topic-pills">
-            {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
-            <a href="{{ printf "/categories/%s/" ($name | urlize) | relURL }}" class="topic-pill">{{ $name }}</a>
+            {{ range $topics }}
+            <a href="{{ if $pillarMode }}{{ "/blog/" | relURL }}{{ else }}{{ printf "/categories/%s/" (. | urlize) | relURL }}{{ end }}" class="topic-pill">{{ . }}</a>
             {{ end }}
         </div>
     </div>
