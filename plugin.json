@@ -4,9 +4,9 @@
   "description": "Versatile editorial micro.blog theme that carries a microblog timeline and a long-form publication on one site. Configurable identity layout (left sidebar or full-width top header), homepage composition (feed, magazine, or sectioned cards), six accent palettes, three type pairings, and dark mode. Rich link-preview and YouTube embed cards, share strip, consulting CTA, pagination, and Archive/RSS/JSON footer. Two visual variants (Default editorial + Starfield Dreams). Every choice is configurable per site, so the same theme cleanly carries a C-level publication, an Americana politics site, and a personal timeline without forking.",
   "fields": [
 
-    { "field": "params.avatar",
+    { "field": "params.profile_image_url",
       "label": "Profile / brand image URL",
-      "placeholder": "Absolute URL to a circular profile photo or square brand mark." },
+      "placeholder": "Absolute URL to a circular profile photo or square brand mark. Overrides the Micro.blog account avatar." },
     { "field": "params.show_avatar",
       "label": "Show profile image",
       "type": "boolean" },
@@ -20,6 +20,13 @@
       "label": "Sibling site links (sidebar nav)",
       "type": "markdown",
       "placeholder": "JSON array of cross-links to your other sites, e.g. [{\"name\":\"superterran\",\"url\":\"https://superterran.net\"}]" },
+    { "field": "params.content_nav_tabs",
+      "label": "Show nav (Blog/Publications/siblings/Topics) as tabs atop content instead of in the sidebar",
+      "type": "boolean" },
+    { "field": "params.content_tabs_json",
+      "label": "Content tabs — explicit override (optional)",
+      "type": "markdown",
+      "placeholder": "Leave blank to infer (Home/Blog/Publications/siblings). Or set tabs explicitly: [{\"name\":\"Home\",\"url\":\"/\"},{\"name\":\"Blog\",\"url\":\"/blog/\"},{\"name\":\"superterran\",\"url\":\"https://superterran.net\"}]" },
 
     { "field": "params.theme_default",
       "label": "Default theme variant",

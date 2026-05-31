@@ -61,28 +61,22 @@ aside *,
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-/* Glass effect for main content area — only the blur, no chrome.
-   Per Doug's adjustment 2026-05-30: drop the dark tint, border, and
-   box-shadow so the container reads as pure blur over the starfield
-   instead of a visible card. */
+/* The main content AREA is fully transparent — the starfield shows straight
+   through it. Only the content BLOCKS (sidebar, content-tabs, article cards,
+   publication cards…) carry the frosted glass, so there's a single blur layer,
+   not two. (2026-05-31: removed the area-level backdrop-filter and the light-mode
+   full-column panel that were stacking a second blur over everything.) */
 .content,
 main,
-.site-content {
-  /* background: rgba(15, 10, 25, 0.65); */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  /* border: 1px solid rgba(153, 153, 255, 0.15); */
-  /* box-shadow: 0 8px 32px 0 rgba(51, 102, 204, 0.2); */
-}
-
+.site-content,
 html.light .content,
 html.light main,
 html.light .site-content {
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(51, 102, 204, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(51, 102, 204, 0.15);
+  background: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* Adjust main content padding and width for better spacing */
@@ -357,4 +351,83 @@ body {
 html.light,
 html.light body {
   background: linear-gradient(135deg, #e8eef5 0%, #d5e3f0 50%, #c5d9ed 100%) !important;
+}
+
+/* ============================================================================
+   Dougie refactor adjustments (2026-05-31)
+   ============================================================================ */
+
+/* Float the rail: earlier rules force .sidebar to position:relative (so it
+   scrolled with the page). Pin it to the viewport and let content clear it.
+   Inner content scrolls if it ever overflows. */
+.sidebar {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width, 400px);
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 2;
+}
+.main-content {
+  margin-left: var(--sidebar-width, 400px) !important;
+}
+
+/* Content-tab nav: a cohesive full-width sticky top bar that fills the top and
+   sides of the content area, rather than a detached floating card. Negative
+   margins bleed it across the .main-content padding box (top 46px, right 3rem,
+   left 1rem); it lives in .content-wrapper (full width in this variant). */
+.content-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  margin: -46px -3rem 1.75rem -1rem;
+  padding: 1.05rem 3rem 0.85rem 1rem;
+  background: rgba(22, 15, 34, 0.92);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 153, 102, 0.2);
+  border-radius: 0;
+}
+html.light .content-tabs {
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid rgba(51, 102, 204, 0.3);
+}
+
+/* Let the content area (and thus the header bar) run to the viewport edges
+   instead of the centered max-width:1400 container — so the header goes truly
+   end-to-end at any width. Sidebar stays fixed at the left; content clears it. */
+.site-container { max-width: none !important; }
+
+/* In-content navs (pagination / footer) shouldn't inherit the broad `nav` dark
+   panel. Neutralize it and render the Older/Newer controls as frosted pills. */
+nav.pagination,
+.dougie-foot nav,
+.dougie-foot .pagination {
+  background: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 0 !important;
+  border-bottom: 0 !important;
+}
+.dougie-foot .pagination a,
+nav.pagination a {
+  background: rgba(35, 25, 50, 0.55) !important;
+  border: 1px solid rgba(255, 153, 102, 0.45) !important;
+  border-radius: 0.55rem;
+  color: #f3f3f4 !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  text-shadow: none;
+}
+.dougie-foot .pagination a:hover,
+nav.pagination a:hover {
+  border-color: rgba(255, 153, 102, 0.9) !important;
+  color: #fff !important;
+}
+html.light .dougie-foot .pagination a,
+html.light nav.pagination a {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(51, 102, 204, 0.45) !important;
+  color: #16161a !important;
 }

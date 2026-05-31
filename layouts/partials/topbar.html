@@ -4,8 +4,9 @@
 <header class="dougie-topbar">
     <div class="dougie-topbar-row">
         <div class="dougie-topbar-id">
-            {{ if and .Site.Params.show_avatar .Site.Params.avatar }}
-            <a href="{{ "/" | relURL }}"><img src="{{ .Site.Params.avatar }}" alt="{{ .Site.Title }}"></a>
+            {{ $avatar := or .Site.Params.profile_image_url .Site.Params.avatar }}
+            {{ if and .Site.Params.show_avatar $avatar }}
+            <a href="{{ "/" | relURL }}"><img src="{{ $avatar }}" alt="{{ .Site.Title }}"></a>
             {{ end }}
             <div>
                 <h1 class="profile-name" style="margin:0;font-size:1.3rem;"><a href="{{ "/" | relURL }}">{{ .Site.Title }}</a></h1>

@@ -6,50 +6,33 @@
 </div>
 
 <style>
-/* Container for both controls */
-.site-controls {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 1000;
-  display: flex;
-  flex-direction: row;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-/* Theme switcher styling to match dark mode toggle */
-.theme-switcher {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+/* .site-controls positioning lives in dougie-system.css (fixed, top-left) so the
+   dark-mode toggle and this variant chooser cluster together regardless of which
+   controls are enabled. Here we only style the select itself. */
+.theme-switcher { display: flex; align-items: center; }
 
 .theme-select {
-  padding: 0.75rem 1rem;
-  background: hsl(var(--muted) / 0.2);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid hsl(var(--border) / 0.3);
-  border-radius: 12px;
-  color: hsl(var(--foreground));
-  font-size: 0.875rem;
+  height: 36px;
+  padding: 0 2rem 0 0.7rem;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 9px;
+  color: hsl(var(--muted-foreground));
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 16px hsl(var(--foreground) / 0.05);
+  transition: color .15s, border-color .15s;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='currentColor' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 12px;
-  padding-right: 2.5rem;
-  min-width: 150px;
+  background-position: right 0.7rem center;
+  background-size: 10px;
 }
 
 .theme-select:hover {
-  background: hsl(var(--muted) / 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px hsl(var(--foreground) / 0.08);
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--primary));
 }
 
 .theme-select:focus {
@@ -167,20 +150,23 @@
       unloadTheme();
     }
 
+    // Cache-buster so variant CSS/JS refresh on deploy (mirrors main.css in head.html)
+    const CB = '{{ now.Unix }}';
+
     // Load CSS
     const cssLink = document.createElement('link');
     cssLink.id = 'theme-css';
     cssLink.rel = 'stylesheet';
-    cssLink.href = `${THEME_BASE_PATH}${themeId}/theme.css`;
+    cssLink.href = `${THEME_BASE_PATH}${themeId}/theme.css?v=${CB}`;
     document.head.appendChild(cssLink);
 
     // Check if theme has JS
     try {
-      const jsResponse = await fetch(`${THEME_BASE_PATH}${themeId}/theme.js`, { method: 'HEAD' });
+      const jsResponse = await fetch(`${THEME_BASE_PATH}${themeId}/theme.js?v=${CB}`, { method: 'HEAD' });
       if (jsResponse.ok) {
         const script = document.createElement('script');
         script.id = 'theme-js';
-        script.src = `${THEME_BASE_PATH}${themeId}/theme.js`;
+        script.src = `${THEME_BASE_PATH}${themeId}/theme.js?v=${CB}`;
         document.body.appendChild(script);
       }
     } catch (error) {

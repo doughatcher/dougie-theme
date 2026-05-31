@@ -118,6 +118,7 @@ body[data-font="literary"] .post-body { font-size: 1.075rem; }
 .sidebar {
   background-color: transparent;
   border-right: 1px solid hsl(var(--border));
+  margin: 0;   /* kill a stray 16px margin that left a gap at the top of the rail divider */
 }
 .sidebar-content { padding: 30px 28px 40px; display: flex; flex-direction: column; gap: 22px; }
 .profile-section { display: flex; flex-direction: column; gap: 14px; }
@@ -326,6 +327,37 @@ body[data-identity="topbar"] .dougie-foot { max-width: 1100px; margin-left: auto
 .home-pubs-grid .publication-title { font-family: var(--font-serif); font-weight: var(--head-weight); font-size: 1rem; line-height: 1.22; margin: 0; }
 .home-pubs-grid .publication-title a { color: hsl(var(--foreground)); transition: color .15s; }
 .home-pubs-grid .publication-title a:hover { color: hsl(var(--primary)); }
+
+/* Blog page featured header: 1 hero + 3-card row, then the normal scroll continues. */
+.blog-featured { margin: 0 0 2.5rem; }
+.blog-hero { padding-bottom: 1.75rem; border-bottom: 1px solid hsl(var(--border)); margin-bottom: 2rem; }
+.blog-hero-title { font-family: var(--font-serif); font-weight: var(--head-weight); font-size: 2.3rem; line-height: 1.08; letter-spacing: -0.01em; margin: 0.55rem 0 0.5rem; }
+.blog-hero-title a { color: hsl(var(--foreground)); transition: color .15s; }
+.blog-hero-title a:hover { color: hsl(var(--primary)); }
+.blog-hero-excerpt { font-size: 1.1rem; line-height: 1.55; color: hsl(var(--muted-foreground)); margin: 0.4rem 0 0.9rem; max-width: 62ch; }
+.blog-featured-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem 2.25rem; }
+.blog-more-label { margin: 2.5rem 0 1.4rem; padding-top: 1.5rem; border-top: 1px solid hsl(var(--border)); }
+@media (max-width: 900px) { .blog-featured-grid { grid-template-columns: 1fr; } }
+
+/* ---- Content-top tab nav (params.content_nav_tabs) ------------------------
+   Subtle horizontal nav across the top of the content column: Blog · Publications
+   · siblings · Topics(▾). Replaces the sidebar nav/Topics when enabled.          */
+.content-tabs { display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
+  padding-bottom: 0.85rem; margin-bottom: 2rem; border-bottom: 1px solid hsl(var(--border)); }
+.content-tab { color: hsl(var(--muted-foreground)); padding-bottom: 5px; border-bottom: 1.5px solid transparent;
+  transition: color .15s, border-color .15s; cursor: pointer; }
+.content-tab:hover { color: hsl(var(--foreground)); }
+.content-tab.is-active { color: hsl(var(--foreground)); border-bottom-color: hsl(var(--primary)); }
+.content-tab-topics { position: relative; }
+.content-tab-topics summary { list-style: none; display: inline-flex; align-items: center; gap: 5px; }
+.content-tab-topics summary::-webkit-details-marker { display: none; }
+.content-tab-topics summary::after { content: "\25BE"; font-size: 0.85em; transition: transform .15s; }
+.content-tab-topics[open] summary::after { transform: rotate(180deg); }
+.content-tab-menu { position: absolute; top: calc(100% + 9px); left: 0; z-index: 40;
+  background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 0.6rem;
+  padding: 0.7rem; display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  min-width: 210px; box-shadow: 0 10px 28px hsl(var(--foreground) / 0.10); }
 
 /* ---- 11. Americana flair (leaning.blue) — data-flagline="true" ------------- */
 body[data-flagline="true"]::before {

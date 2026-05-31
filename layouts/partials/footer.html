@@ -2,8 +2,9 @@
     <div class="container">
         <!-- Mobile Profile (Avatar and Social Links) - Only visible on mobile -->
         <div class="mobile-profile">
-            {{ if .Site.Params.avatar }}
-            <img src="{{ .Site.Params.avatar }}" alt="{{ if .Site.Params.author.name }}{{ .Site.Params.author.name }}{{ else }}{{ .Site.Title }}{{ end }}" class="profile-avatar">
+            {{ $avatar := or .Site.Params.profile_image_url .Site.Params.avatar }}
+            {{ if $avatar }}
+            <img src="{{ $avatar }}" alt="{{ if .Site.Params.author.name }}{{ .Site.Params.author.name }}{{ else }}{{ .Site.Title }}{{ end }}" class="profile-avatar">
             {{ end }}
             
             <h2 class="mobile-profile-name">

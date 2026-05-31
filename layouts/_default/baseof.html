@@ -16,6 +16,7 @@
                 {{ partial "topbar.html" . }}
                 {{ partial "horizontal-nav.html" . }}
                 <div class="content-wrapper">
+                    {{ partial "content-tabs.html" . }}
                     <div class="posts-content">
                         {{ block "main" . }}{{ end }}
                     </div>

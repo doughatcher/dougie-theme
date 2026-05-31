@@ -4,9 +4,48 @@
     <p class="blog-description">I write about the gap between what commerce platforms promise and what they actually deliver in production. Fifteen years of migrations, no vendor allegiances.</p>
 </div>
 
-<div class="posts-list blog-list">
-    {{ $paginator := .Paginate .Pages (.Site.Params.posts_per_page | default 10) }}
+{{ $all := .Pages }}
+{{ if not $all }}
+<p class="no-posts">No posts yet — check back soon.</p>
+{{ else }}
 
+{{/* Featured header (page 1 only): 1 hero + 3 cards, then the normal scroll continues. */}}
+{{ $featured := first 4 $all }}
+{{ $rest := after 4 $all }}
+{{ $paginator := .Paginate $rest (.Site.Params.posts_per_page | default 10) }}
+
+{{ if eq $paginator.PageNumber 1 }}
+<div class="blog-featured">
+    {{ $hero := index $featured 0 }}
+    {{ with $hero }}
+    <article class="blog-hero">
+        {{ with .Params.pillar }}<span class="post-kind">{{ . }}</span>{{ end }}
+        <h2 class="blog-hero-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+        <div class="home-card-meta"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>{{ if and .Site.Params.show_reading_time .ReadingTime }} &middot; {{ .ReadingTime }} min read{{ end }}</div>
+        <p class="blog-hero-excerpt">{{ .Summary | plainify | truncate 240 }}</p>
+        <a href="{{ .Permalink }}" class="read-more">Read the post &rarr;</a>
+    </article>
+    {{ end }}
+    {{ if gt (len $featured) 1 }}
+    <div class="blog-featured-grid">
+        {{ range after 1 $featured }}
+        <article class="home-blog-card">
+            {{ with .Params.pillar }}<span class="post-kind">{{ . }}</span>{{ end }}
+            <h3 class="home-blog-card-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+            <div class="home-card-meta"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>{{ if and .Site.Params.show_reading_time .ReadingTime }} &middot; {{ .ReadingTime }} min{{ end }}</div>
+            <p class="home-blog-card-excerpt">{{ .Summary | plainify | truncate 120 }}</p>
+            <a href="{{ .Permalink }}" class="read-more">Read &rarr;</a>
+        </article>
+        {{ end }}
+    </div>
+    {{ end }}
+</div>
+{{ end }}
+
+{{/* The rest of the posts, scrolling as before */}}
+{{ if $paginator.Pages }}
+<div class="posts-list blog-list">
+    {{ if eq $paginator.PageNumber 1 }}<h2 class="home-section-title blog-more-label">More posts</h2>{{ end }}
     {{ range $paginator.Pages }}
     <article class="post-preview blog-post-preview">
         {{ if .Params.pillar }}
@@ -33,8 +72,6 @@
             <a href="{{ .Permalink }}" class="read-more">Read →</a>
         </div>
     </article>
-    {{ else }}
-    <p class="no-posts">No posts yet — check back soon.</p>
     {{ end }}
 
     {{ if gt $paginator.TotalPages 1 }}
@@ -48,6 +85,9 @@
     </nav>
     {{ end }}
 </div>
+{{ end }}
+
+{{ end }}
 
 <p class="blog-follow">Following along: <a href="/feed.xml">RSS</a> / <a href="https://www.linkedin.com/in/doughatcher/">LinkedIn</a></p>
 {{ end }}

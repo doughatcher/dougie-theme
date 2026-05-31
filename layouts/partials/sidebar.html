@@ -1,9 +1,13 @@
+{{/* Prefer the dedicated profile_image_url override (which the user controls) over
+     params.avatar, since Micro.blog auto-populates params.avatar with the account
+     photo and that would otherwise win. */}}
+{{ $avatar := or .Site.Params.profile_image_url .Site.Params.avatar }}
 <aside class="sidebar">
     <!-- Mobile Header - Only visible on mobile -->
     <div class="mobile-header">
-        {{ if .Site.Params.avatar }}
+        {{ if $avatar }}
         <a href="{{ "/" | relURL }}" class="mobile-header-avatar">
-            <img src="{{ .Site.Params.avatar }}" alt="{{ .Site.Title }}">
+            <img src="{{ $avatar }}" alt="{{ .Site.Title }}">
         </a>
         {{ end }}
         <div class="mobile-header-content">
@@ -20,9 +24,9 @@
         <!-- Profile Section -->
         <div class="profile-section">
             {{ if .Site.Params.show_avatar }}
-            {{ if .Site.Params.avatar }}
+            {{ if $avatar }}
             <a href="{{ "/" | relURL }}">
-                <img src="{{ .Site.Params.avatar }}" alt="{{ if .Site.Params.author.name }}{{ .Site.Params.author.name }}{{ else }}{{ .Site.Title }}{{ end }}" class="profile-avatar">
+                <img src="{{ $avatar }}" alt="{{ if .Site.Params.author.name }}{{ .Site.Params.author.name }}{{ else }}{{ .Site.Title }}{{ end }}" class="profile-avatar">
             </a>
             {{ end }}
             {{ end }}
@@ -48,7 +52,9 @@
     {{ partial "publications-sidebar.html" . }}
     
     <!-- Primary nav: Blog + Publications + sibling sites (Home/Archive/RSS intentionally
-         omitted — Home is the logo, RSS is the social icon, Archive lives in the footer). -->
+         omitted — Home is the logo, RSS is the social icon, Archive lives in the footer).
+         Hidden when content_nav_tabs moves nav to the top of the content column. -->
+    {{ if not .Site.Params.content_nav_tabs }}
     <nav class="sidebar-nav">
         {{/* micro.blog keeps the nav menu in its UI, not the exported config, so the
              menu can be empty here. Surface Blog + Publications from content so the
@@ -78,15 +84,17 @@
             {{ end }}
         </ul>
     </nav>
+    {{ end }}
 
     <!-- Topics: editorial pillars (from /blog post `pillar` frontmatter), falling
-         back to categories. Matches the prototype rail's pill cloud. -->
+         back to categories. Matches the prototype rail's pill cloud.
+         Hidden when content_nav_tabs moves Topics into the top tab bar. -->
     {{ $pillars := slice }}
     {{ range (where .Site.RegularPages "Section" "blog") }}
         {{ with .Params.pillar }}{{ $pillars = $pillars | append . }}{{ end }}
     {{ end }}
     {{ $pillars = uniq $pillars }}
-    {{ if $pillars }}
+    {{ if and $pillars (not .Site.Params.content_nav_tabs) }}
     <div class="sidebar-topics">
         <h3 class="sidebar-section-title">Topics</h3>
         <div class="topic-pills">
@@ -95,7 +103,7 @@
             {{ end }}
         </div>
     </div>
-    {{ else if .Site.Taxonomies.categories }}
+    {{ else if and .Site.Taxonomies.categories (not .Site.Params.content_nav_tabs) }}
     <div class="sidebar-topics">
         <h3 class="sidebar-section-title">Topics</h3>
         <div class="topic-pills">

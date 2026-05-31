@@ -77,7 +77,9 @@
          (these replace the sidebar callouts). Shown for feed + magazine. */}}
     {{ if ne $home "sectioned" }}
     {{ $blogPosts := first 4 (where .Site.RegularPages "Section" "blog") }}
-    {{ if $blogPosts }}
+    {{/* Show the fuller homepage section only when the matching sidebar callout is OFF,
+         so enabling the sidebar callout doesn't duplicate it here. */}}
+    {{ if and $blogPosts (not .Site.Params.show_from_the_blog) }}
     <section class="home-section">
         <div class="home-section-head">
             <h2 class="home-section-title">From the Blog</h2>
@@ -98,7 +100,7 @@
     {{ end }}
 
     {{ $pubsCat := index .Site.Taxonomies.categories "publications" }}
-    {{ if $pubsCat }}
+    {{ if and $pubsCat (not .Site.Params.show_publications_sidebar) }}
     <section class="home-section">
         <div class="home-section-head">
             <h2 class="home-section-title">Recent Publications</h2>
@@ -107,17 +109,23 @@
         <div class="home-pubs-grid">
             {{ range first 4 $pubsCat.Pages }}
             {{ $thumb := "" }}{{ if .Params.thumbnail }}{{ $thumb = .Params.thumbnail }}{{ else if .Params.photos }}{{ $thumb = index .Params.photos 0 }}{{ else if .Params.images }}{{ $thumb = index .Params.images 0 }}{{ end }}
-            {{/* .publication-item / .publication-title / .publication-content-wrapper are the
-                 hooks publication-thumbnails.js scans to lazy-load og:image / first-image thumbs. */}}
+            {{/* Short publications point at their external link (like categories/term.html),
+                 so publication-thumbnails.js fetches the external og:image instead of a
+                 (missing) internal first-image. This matches the /publications page. */}}
+            {{ $link := .RelPermalink }}{{ $ext := false }}
+            {{ if lt (len .Plain) 300 }}
+                {{ $m := findRE `href="([^"]+)"` .Content 1 }}
+                {{ if $m }}{{ $link = replaceRE `href="([^"]+)"` "$1" (index $m 0) }}{{ $ext = true }}
+                {{ else if .Params.canonical_url }}{{ $link = .Params.canonical_url }}{{ $ext = true }}{{ end }}
+            {{ end }}
             <article class="publication-item">
-                {{/* Always render the thumbnail slot; publication-thumbnails.js fills the
-                     <a> with an og:image / first-post-image when one exists, otherwise the
-                     striped placeholder keeps every card uniform. */}}
+                {{/* publication-thumbnails.js fills the <a> with an og:image / first-post-image
+                     when one exists; the striped placeholder keeps cards uniform otherwise. */}}
                 <div class="publication-thumbnail{{ if not $thumb }} publication-thumbnail-empty{{ end }}">
-                    <a href="{{ .RelPermalink }}">{{ if $thumb }}<img src="{{ $thumb }}" alt="{{ .Title }}" loading="lazy">{{ end }}</a>
+                    <a href="{{ $link }}"{{ if $ext }} target="_blank" rel="noopener"{{ end }}>{{ if $thumb }}<img src="{{ $thumb }}" alt="{{ .Title }}" loading="lazy">{{ end }}</a>
                 </div>
                 <div class="publication-content-wrapper">
-                    <h3 class="publication-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+                    <h3 class="publication-title"><a href="{{ $link }}"{{ if $ext }} target="_blank" rel="noopener"{{ end }}>{{ .Title }}</a></h3>
                     <time class="home-card-meta" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
                 </div>
             </article>

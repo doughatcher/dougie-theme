@@ -1,0 +1,49 @@
+{{/* content-tabs.html — subtle horizontal nav across the top of the content column
+     (Home · Blog · Publications · sibling sites · Topics dropdown). Opt-in via
+     params.content_nav_tabs; when on, sidebar.html hides its nav + Topics.
+
+     Tab structure is INFERRED from metadata by default (Home always; Blog if a /blog
+     section exists; Publications if that category exists; siblings from sibling_links).
+     To set it explicitly, define params.content_tabs_json — a JSON array of
+     {"name","url"} that REPLACES the inferred link tabs (the Topics dropdown still
+     appends when blog pillars exist). Sidebar identity layout only. */}}
+{{ if and .Site.Params.content_nav_tabs (ne .Site.Params.identity_layout "topbar") }}
+{{ $cur := . }}
+<nav class="content-tabs">
+    {{ $tabs := slice }}
+    {{ with .Site.Params.content_tabs_json }}{{ $tabs = . | transform.Unmarshal }}{{ end }}
+    {{ if $tabs }}
+        {{/* explicit, configured tabs */}}
+        {{ range $tabs }}
+        {{ $ext := hasPrefix .url "http" }}
+        {{ $active := cond (eq .url "/") $cur.IsHome (and (not $ext) (hasPrefix $cur.RelPermalink (.url | relURL))) }}
+        <a href="{{ if $ext }}{{ .url }}{{ else }}{{ .url | relURL }}{{ end }}" class="content-tab{{ if $active }} is-active{{ end }}"{{ if $ext }} rel="me"{{ end }}>{{ .name }}</a>
+        {{ end }}
+    {{ else }}
+        {{/* inferred from metadata */}}
+        <a href="{{ "/" | relURL }}" class="content-tab{{ if $cur.IsHome }} is-active{{ end }}">Home</a>
+        {{ if .Site.GetPage "section" "blog" }}
+        <a href="{{ "/blog/" | relURL }}" class="content-tab{{ if hasPrefix $cur.RelPermalink "/blog" }} is-active{{ end }}">Blog</a>
+        {{ end }}
+        {{ if index .Site.Taxonomies.categories "publications" }}
+        <a href="{{ "/categories/publications/" | relURL }}" class="content-tab{{ if hasPrefix $cur.RelPermalink "/categories/publications" }} is-active{{ end }}">Publications</a>
+        {{ end }}
+        {{ $siblings := .Site.Params.sibling_links }}
+        {{ with .Site.Params.sibling_links_json }}{{ $siblings = . | transform.Unmarshal }}{{ end }}
+        {{ range $siblings }}
+        <a href="{{ .url }}" class="content-tab" rel="me">{{ .name }}</a>
+        {{ end }}
+    {{ end }}
+    {{ $pillars := slice }}
+    {{ range (where .Site.RegularPages "Section" "blog") }}{{ with .Params.pillar }}{{ $pillars = $pillars | append . }}{{ end }}{{ end }}
+    {{ $pillars = uniq $pillars }}
+    {{ if $pillars }}
+    <details class="content-tab-topics">
+        <summary class="content-tab">Topics</summary>
+        <div class="content-tab-menu">
+            {{ range $pillars }}<a href="{{ "/blog/" | relURL }}" class="topic-pill">{{ . }}</a>{{ end }}
+        </div>
+    </details>
+    {{ end }}
+</nav>
+{{ end }}
