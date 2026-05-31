@@ -34,21 +34,6 @@
         <a href="{{ .url }}" class="content-tab" rel="me">{{ .name }}</a>
         {{ end }}
     {{ end }}
-    {{ $pillars := slice }}
-    {{ range (where .Site.RegularPages "Section" "blog") }}{{ with .Params.pillar }}{{ $pillars = $pillars | append . }}{{ end }}{{ end }}
-    {{ $pillars = uniq $pillars }}
-    {{ $pillarMode := gt (len $pillars) 0 }}
-    {{ $topics := $pillars }}
-    {{ if not $pillarMode }}{{ range $name, $t := .Site.Taxonomies.categories }}{{ $topics = $topics | append $name }}{{ end }}{{ end }}
-    {{ $limit := 0 }}{{ with .Site.Params.topics_limit }}{{ $limit = int . }}{{ end }}
-    {{ if and (gt $limit 0) (lt $limit (len $topics)) }}{{ $topics = first $limit $topics }}{{ end }}
-    {{ if and $topics (not .Site.Params.hide_topics) }}
-    <details class="content-tab-topics">
-        <summary class="content-tab">Topics</summary>
-        <div class="content-tab-menu">
-            {{ range $topics }}<a href="{{ if $pillarMode }}{{ "/blog/" | relURL }}{{ else }}{{ printf "/categories/%s/" (. | urlize) | relURL }}{{ end }}" class="topic-pill">{{ . }}</a>{{ end }}
-        </div>
-    </details>
-    {{ end }}
+    {{ partial "topics-nav.html" . }}
 </nav>
 {{ end }}

@@ -27,8 +27,8 @@
         <a href="{{ .URL | relURL }}" class="nav-link{{ if hasPrefix $cur.RelPermalink .URL }} active{{ end }}">{{ .Name }}</a>
         {{ end }}
         {{ end }}
-        {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
-        <a href="{{ printf "/categories/%s/" ($name | urlize) | relURL }}" class="nav-link">{{ $name | title }}</a>
-        {{ end }}
+        {{/* Topics collapse into a single dropdown (honors hide_topics / topics_limit)
+             — never dump every category as its own tab. */}}
+        {{ partial "topics-nav.html" . }}
     </nav>
 </header>
