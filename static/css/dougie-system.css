@@ -91,11 +91,13 @@ body[data-accent="emerald"]  { --primary: 162 70% 33%; --ring: 162 70% 33%; }
 body[data-accent="cobalt"]   { --primary: 222 78% 52%; --ring: 222 78% 52%; }
 body[data-accent="crimson"]  { --primary: 352 62% 49%; --ring: 352 62% 49%; }
 body[data-accent="amber"]    { --primary: 36 78% 40%;  --ring: 36 78% 40%; }
+body[data-accent="orange"]   { --primary: 20 90% 48%;  --ring: 20 90% 48%; }
 body[data-accent="violet"]   { --primary: 256 56% 58%; --ring: 256 56% 58%; }
 html.dark body[data-accent="emerald"] { --primary: 162 60% 46%; --ring: 162 60% 46%; }
 html.dark body[data-accent="cobalt"]  { --primary: 222 78% 66%; --ring: 222 78% 66%; }
 html.dark body[data-accent="crimson"] { --primary: 352 75% 64%; --ring: 352 75% 64%; }
 html.dark body[data-accent="amber"]   { --primary: 36 82% 56%;  --ring: 36 82% 56%; }
+html.dark body[data-accent="orange"]  { --primary: 22 95% 62%;  --ring: 22 95% 62%; }
 html.dark body[data-accent="violet"]  { --primary: 256 80% 72%; --ring: 256 80% 72%; }
 
 /* ---- 4. Font pairings -----------------------------------------------------
