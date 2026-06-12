@@ -42,7 +42,7 @@ jobs:
 
       # First call: authenticates if no valid cached cookie, then deploys.
       - name: Deploy to leaning.blue
-        uses: doughatcher/micro.blog/microblog-deploy-action@main
+        uses: doughatcher/microblog-deploy-action@v1
         with:
           microblog-email: ${{ vars.MICROBLOG_EMAIL }}
           gmail-email: ${{ vars.GMAIL_EMAIL }}
@@ -52,7 +52,7 @@ jobs:
 
       # Second call: reuses the cookie written above — no new sign-in email.
       - name: Deploy to superterran.net
-        uses: doughatcher/micro.blog/microblog-deploy-action@main
+        uses: doughatcher/microblog-deploy-action@v1
         with:
           microblog-email: ${{ vars.MICROBLOG_EMAIL }}
           gmail-email: ${{ vars.GMAIL_EMAIL }}
