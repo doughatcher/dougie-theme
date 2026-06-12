@@ -1,0 +1,61 @@
+name: "Proving ground: microblog-deploy-action"
+
+# Manual proving harness for the reusable microblog-deploy-action
+# (github.com/doughatcher/micro.blog/microblog-deploy-action). Exercises the
+# action against the two proving-ground sites — leaning.blue + superterran.net —
+# WITHOUT touching the production deploy.yml that refreshes all 3 sites.
+#
+# Validates the action's session-reuse path: the first call authenticates and
+# writes .session-cookie; the second call finds a valid cookie and skips the
+# sign-in email entirely. So a clean run sends at most one magic-link email.
+#
+# Once this is green, fold the logic into deploy.yml and retire the vendored
+# .github/deploy/ scripts. While the action lives in the private micro.blog repo
+# it's referenced by path; after extraction to a public repo, switch the ref.
+#
+# Required repo secrets:  GMAIL_APP_PASSWORD
+# Required repo variables: GMAIL_EMAIL, MICROBLOG_EMAIL
+
+on:
+  workflow_dispatch:
+
+jobs:
+  prove:
+    name: Deploy via action (leaning.blue, then superterran.net)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate cache key date prefix
+        id: cache-key
+        run: echo "date_prefix=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore session cookie from cache
+        uses: actions/cache@v4
+        with:
+          path: .session-cookie
+          key: microblog-session-${{ github.repository }}-${{ steps.cache-key.outputs.date_prefix }}
+          restore-keys: |
+            microblog-session-${{ github.repository }}-
+
+      # First call: authenticates if no valid cached cookie, then deploys.
+      - name: Deploy to leaning.blue
+        uses: doughatcher/micro.blog/microblog-deploy-action@main
+        with:
+          microblog-email: ${{ vars.MICROBLOG_EMAIL }}
+          gmail-email: ${{ vars.GMAIL_EMAIL }}
+          gmail-app-password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          site-id: '267931'
+          theme-id: '102551'
+
+      # Second call: reuses the cookie written above — no new sign-in email.
+      - name: Deploy to superterran.net
+        uses: doughatcher/micro.blog/microblog-deploy-action@main
+        with:
+          microblog-email: ${{ vars.MICROBLOG_EMAIL }}
+          gmail-email: ${{ vars.GMAIL_EMAIL }}
+          gmail-app-password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          site-id: '337434'
+          theme-id: '102557'
